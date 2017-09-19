@@ -6,9 +6,9 @@ from io import StringIO
 from esios import Esios
 
 
-from liquicomun import formats
+from .component import Component
 
-class REEformat(formats.Component):
+class REEformat(Component):
     ''' REE esios common format'''
     name = 'ree'
     file_tmpl = 'ree'
