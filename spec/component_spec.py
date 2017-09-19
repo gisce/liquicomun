@@ -1,7 +1,7 @@
 from expects.testing import failure
 from expects import *
 
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 from dateutil.relativedelta import relativedelta
 import json
 import fnmatch
