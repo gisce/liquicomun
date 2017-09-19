@@ -1,3 +1,5 @@
+from .ree import REEformat
+
 class Grcosdnc(REEformat):
     """
     Componentes precio final por coste ajustes del sistema (EUR/MWh bc)
