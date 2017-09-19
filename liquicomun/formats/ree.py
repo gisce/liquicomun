@@ -2,7 +2,7 @@ import re
 import fnmatch
 import os
 from datetime import datetime, date, timedelta
-from StringIO import StringIO
+from io import StringIO
 from esios import Esios
 
 
