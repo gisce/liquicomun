@@ -41,7 +41,7 @@ with description('Perd20A component from esios'):
 
     with context('C3_perd20A_20141001_20141031'):
         with before.all:
-            self.p = Perd20A(self.data_path + 'C3_perd20A_20141001_20141031')
+            self.p = formats.Perd20A(self.data_path + 'C3_perd20A_20141001_20141031')
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -70,7 +70,7 @@ with description('Perd21A component from esios'):
 
     with context('C3_perd21A_20141001_20141031'):
         with before.all:
-            self.p = Perd21A(self.data_path + 'C3_perd21A_20141001_20141031')
+            self.p = formats.Perd21A(self.data_path + 'C3_perd21A_20141001_20141031')
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -99,7 +99,7 @@ with description('Perd20DH component from esios'):
 
     with context('C3_perd20D_20141001_20141031'):
         with before.all:
-            self.p = Perd20DH(self.data_path + 'C3_perd20D_20141001_20141031')
+            self.p = formats.Perd20DH(self.data_path + 'C3_perd20D_20141001_20141031')
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -128,7 +128,7 @@ with description('Perd21DH component from esios'):
 
     with context('C3_perd21D_20141001_20141031'):
         with before.all:
-            self.p = Perd21DH(self.data_path + 'C3_perd21D_20141001_20141031')
+            self.p = formats.Perd21DH(self.data_path + 'C3_perd21D_20141001_20141031')
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -157,7 +157,7 @@ with description('Perd20DHS component from esios'):
 
     with context('C3_perd20DHS_20141001_20141031'):
         with before.all:
-            self.p = Perd20DHS(self.data_path + 'C3_perd20DHS_20141001_20141031')
+            self.p = formats.Perd20DHS(self.data_path + 'C3_perd20DHS_20141001_20141031')
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -186,7 +186,7 @@ with description('Perd21DHS component from esios'):
 
     with context('C3_perd21DHS_20141001_20141031'):
         with before.all:
-            self.p = Perd21DHS(self.data_path + 'C3_perd21DHS_20141001_20141031')
+            self.p = formats.Perd21DHS(self.data_path + 'C3_perd21DHS_20141001_20141031')
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -215,7 +215,7 @@ with description('Perd30A component from esios'):
 
     with context('C3_perd30A_20141001_20141031'):
         with before.all:
-            self.p = Perd30A(self.data_path + 'C3_perd30A_20141001_20141031')
+            self.p = formats.Perd30A(self.data_path + 'C3_perd30A_20141001_20141031')
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -244,7 +244,7 @@ with description('Perd31A component from esios'):
 
     with context('C3_perd31A_20141001_20141031'):
         with before.all:
-            self.p = Perd31A(self.data_path + 'C3_perd31A_20141001_20141031')
+            self.p = formats.Perd31A(self.data_path + 'C3_perd31A_20141001_20141031')
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -273,7 +273,7 @@ with description('Perd61 component from esios'):
 
     with context('C3_perdg61_20141001_20141031'):
         with before.all:
-            self.p = Perd61(self.data_path + 'C3_perdg61_20141001_20141031')
+            self.p = formats.Perd61(self.data_path + 'C3_perdg61_20141001_20141031')
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -302,7 +302,7 @@ with description('Perd61A component from esios'):
 
     with context('C2_perdg61A_20150901_20150930'):
         with before.all:
-            self.p = Perd61A(self.data_path + 'C2_perdg61A_20150901_20150930')
+            self.p = formats.Perd61A(self.data_path + 'C2_perdg61A_20150901_20150930')
 
         with it('should be year 2015'):
             assert self.p.year == 2015
@@ -328,7 +328,7 @@ with description('Perd61B component from esios'):
 
     with context('C2_perdg61B_20150901_20150930'):
         with before.all:
-            self.p = Perd61B(self.data_path + 'C2_perdg61B_20150901_20150930')
+            self.p = formats.Perd61B(self.data_path + 'C2_perdg61B_20150901_20150930')
 
         with it('should be year 2015'):
             assert self.p.year == 2015
