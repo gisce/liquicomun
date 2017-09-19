@@ -124,7 +124,7 @@ class REEformat(formats.Component):
                     zf.close()
             else:
                 raise ValueError('Coeficients from REE not found')
-        except Exception, e:
+        except Exception as e:
             raise ValueError('Coeficients from REE not found')
 
         return rows
