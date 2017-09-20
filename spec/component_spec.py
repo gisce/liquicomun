@@ -20,7 +20,6 @@ from liquicomun import formats
 def touch(filepath, hora):
     os.utime(filepath, (hora, hora))
 
-
 with description('Creating a component'):
     with context('If no params is given'):
         with it("has month and year as today's year and month"):
@@ -35,8 +34,6 @@ with description('Creating a component'):
         with it("has now version string"):
             c = formats.Component()
             assert c.version == datetime.now().strftime('%Y%m%d%H%M%S')
-
-
 
 with description('REE components download'):
     with context('Inexistent file'):
@@ -74,7 +71,6 @@ with description('REE components download'):
             expect(lambda: formats.Prmncur(filename, self.token)).to(raise_error(ValueError, 'Coeficients from REE not found'))
 
     with context('Clear Cache'):
-
         with it('should clear cache only prefix C7 and everything'):
             directory = formats.REEformat._CACHE_DIR
             formats.REEformat.clear_cache()
@@ -169,6 +165,7 @@ with description('formats.Perd20A component from esios'):
             assert len(self.p.matrix) == 31
 
         with it('has version 20150917110842'):
+            print (self.p.version, 20150917110842)
             assert self.p.version == '20150917110842'
 
         with it('has 18.0 in Day 10 hour 10'):
@@ -180,7 +177,6 @@ with description('formats.Perd20A component from esios'):
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
 
-"""
 with description('Perd21A component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
@@ -189,7 +185,7 @@ with description('Perd21A component from esios'):
 
     with context('C3_perd21A_20141001_20141031'):
         with before.all:
-            self.p = formats.Perd21A(self.data_path + 'C3_perd21A_20141001_20141031')
+            self.p = formats.Perd21A(self.data_path + 'C3_perd21A_20141001_20141031', token=self.token)
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -200,8 +196,9 @@ with description('Perd21A component from esios'):
         with it('should be 31 days'):
             assert len(self.p.matrix) == 31
 
-        with it('has version 20150121201655'):
-            assert self.p.version == '20150121201655'
+        with it('has version 20150917110849'):
+            print (self.p.version, 20150917110849)
+            assert self.p.version == '20150917110849'
 
         with it('has 18.0 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 18.0
@@ -230,8 +227,9 @@ with description('Perd20DH component from esios'):
         with it('should be 31 days'):
             assert len(self.p.matrix) == 31
 
-        with it('has version 20150121201651'):
-            assert self.p.version == '20150121201651'
+        with it('has version 20150917110842'):
+            print (self.p.version, 20150917110842)
+            assert self.p.version == '20150917110842'
 
         with it('has 13.8 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 13.8
@@ -250,7 +248,7 @@ with description('Perd21DH component from esios'):
 
     with context('C3_perd21D_20141001_20141031'):
         with before.all:
-            self.p = formats.Perd21DH(self.data_path + 'C3_perd21D_20141001_20141031')
+            self.p = formats.Perd21DH(self.data_path + 'C3_perd21D_20141001_20141031', token=self.token)
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -261,8 +259,9 @@ with description('Perd21DH component from esios'):
         with it('should be 31 days'):
             assert len(self.p.matrix) == 31
 
-        with it('has version 20150121201656'):
-            assert self.p.version == '20150121201656'
+        with it('has version 20150917110849'):
+            print (self.p.version, 20150917110849)
+            assert self.p.version == '20150917110849'
 
         with it('has 13.8 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 13.8
@@ -292,8 +291,9 @@ with description('Perd20DHS component from esios'):
         with it('should be 31 days'):
             assert len(self.p.matrix) == 31
 
-        with it('has version 20150121201653'):
-            assert self.p.version == '20150121201653'
+        with it('has version 20150917110844'):
+            print (self.p.version, 20150917110844)
+            assert self.p.version == '20150917110844'
 
         with it('has 18.5 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 18.5
@@ -323,8 +323,9 @@ with description('Perd21DHS component from esios'):
         with it('should be 31 days'):
             assert len(self.p.matrix) == 31
 
-        with it('has version 20150121201658'):
-            assert self.p.version == '20150121201658'
+        with it('has version 20150917110853'):
+            print (self.p.version, 20150917110853)
+            assert self.p.version == '20150917110853'
 
         with it('has 18.5 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 18.5
@@ -354,8 +355,9 @@ with description('Perd30A component from esios'):
         with it('should be 31 days'):
             assert len(self.p.matrix) == 31
 
-        with it('has version 20150121201700'):
-            assert self.p.version == '20150121201700'
+        with it('has version 20150917110846'):
+            print (self.p.version, 20150917110846)
+            assert self.p.version == '20150917110846'
 
         with it('has 18.8 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 18.8
@@ -385,8 +387,9 @@ with description('Perd31A component from esios'):
         with it('should be 31 days'):
             assert len(self.p.matrix) == 31
 
-        with it('has version 20150121201702'):
-            assert self.p.version == '20150121201702'
+        with it('has version 20150917110855'):
+            print (self.p.version, 20150917110855)
+            assert self.p.version == '20150917110855'
 
         with it('has 8.5 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 8.5
@@ -400,10 +403,12 @@ with description('Perd31A component from esios'):
 with description('Perd61 component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
+        ESIOS_TOKEN = os.getenv('ESIOS_TOKEN')
+        self.token = ESIOS_TOKEN
 
     with context('C3_perdg61_20141001_20141031'):
         with before.all:
-            self.p = formats.Perd61(self.data_path + 'C3_perdg61_20141001_20141031')
+            self.p = formats.Perd61(self.data_path + 'C3_perdg61_20141001_20141031', token=self.token)
 
         with it('should be year 2014'):
             assert self.p.year == 2014
@@ -414,8 +419,9 @@ with description('Perd61 component from esios'):
         with it('should be 31 days'):
             assert len(self.p.matrix) == 31
 
-        with it('has version 20150121201703'):
-            assert self.p.version == '20150121201703'
+        with it('has version 20150917110858'):
+            print (self.p.version, 20150917110858)
+            assert self.p.version == '20150917110858'
 
         with it('has 8.1 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 8.1
@@ -429,10 +435,12 @@ with description('Perd61 component from esios'):
 with description('Perd61A component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
+        ESIOS_TOKEN = os.getenv('ESIOS_TOKEN')
+        self.token = ESIOS_TOKEN
 
     with context('C2_perdg61A_20150901_20150930'):
         with before.all:
-            self.p = formats.Perd61A(self.data_path + 'C2_perdg61A_20150901_20150930')
+            self.p = formats.Perd61A(self.data_path + 'C2_perdg61A_20150901_20150930', token=self.token)
 
         with it('should be year 2015'):
             assert self.p.year == 2015
@@ -443,8 +451,9 @@ with description('Perd61A component from esios'):
         with it('should be 30 days'):
             assert len(self.p.matrix) == 30
 
-        with it('has version 20151008130816'):
-            assert self.p.version == '20151008130816'
+        with it('has version 20150917110900'):
+            print (self.p.version, 20150917110900)
+            assert self.p.version == '20150917110900'
 
         with it('has 6.8 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 6.8
@@ -455,10 +464,12 @@ with description('Perd61A component from esios'):
 with description('Perd61B component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
+        ESIOS_TOKEN = os.getenv('ESIOS_TOKEN')
+        self.token = ESIOS_TOKEN
 
     with context('C2_perdg61B_20150901_20150930'):
         with before.all:
-            self.p = formats.Perd61B(self.data_path + 'C2_perdg61B_20150901_20150930')
+            self.p = formats.Perd61B(self.data_path + 'C2_perdg61B_20150901_20150930', token=self.token)
 
         with it('should be year 2015'):
             assert self.p.year == 2015
@@ -469,14 +480,12 @@ with description('Perd61B component from esios'):
         with it('should be 30 days'):
             assert len(self.p.matrix) == 30
 
-        with it('has version 20151008130813'):
-            assert self.p.version == '20151008130813'
+        with it('has version 20150917110903'):
+            print (self.p.version, 20150917110903)
+            assert self.p.version == '20150917110903'
 
         with it('has 6.8 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 6.8
 
         with it('should return wednesday (2) on Day 16'):
             assert self.p.get_weekday(16) == 2
-
-
-"""

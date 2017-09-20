@@ -45,7 +45,6 @@ class REEformat(Component):
         if not re.search(self.filename_re, file):
             raise ValueError('Bad %s file name' % self.name)
 
-
         print (self._CACHE_DIR  + file)
         self.filename = os.path.basename(file)
 
