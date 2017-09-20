@@ -50,15 +50,14 @@ with description('formats.Perd20A component from esios'):
 
         with it('should be year 2014'):
             assert self.p.year == 2014
-"""
         with it('should be month 10'):
             assert self.p.month == 10
 
         with it('should be 31 days'):
             assert len(self.p.matrix) == 31
 
-        with it('has version 20150121201650'):
-            assert self.p.version == '20150121201650'
+        with it('has version 20150917110842'):
+            assert self.p.version == '20150917110842'
 
         with it('has 18.0 in Day 10 hour 10'):
             assert self.p.get(10, 10) == 18.0
@@ -69,7 +68,6 @@ with description('formats.Perd20A component from esios'):
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
 
-"""
 """
 
 
