@@ -101,9 +101,6 @@ class REEformat(Component):
         if True:
             start_date = datetime.strptime(file[-17:-9], "%Y%m%d")
             end_date = datetime.strptime(file[-8:], "%Y%m%d")
-            #from esios.archives import Liquicomun
-
-            print (start_date, end_date)
 
             e = Esios(self.token)
             zdata = e.liquicomun().download(start_date, end_date)
@@ -111,33 +108,24 @@ class REEformat(Component):
             if zdata:
                 import zipfile
                 c = BytesIO(zdata)
-                zf = zipfile.ZipFile(c)
-                version = zf.namelist()[0][:2]
-                file_dates = file[-17:]
-                filename = '%(version)s_%(name)s_%(file_dates)s' % locals()
+                with zipfile.ZipFile(c) as zf:
+                    version = zf.namelist()[0][:2]
+                    file_dates = file[-17:]
+                    filename = '%(version)s_%(name)s_%(file_dates)s' % locals()
 
-                print (filename)
-                try:
-                    #if sys.version > '3':
-                    #    the_file =
-                    #with zf.open(filename) as fdata:
+                    print (filename)
+                    try:
+                        with zf.open(filename, "r") as fdata:
+                            textfile = TextIOWrapper(fdata)
+                            reereader = csv.reader(textfile, delimiter=';')
+                            rows = [row for row in reereader]
 
-                    #bdata = BytesIO(zf.read(filename))
-                    #fdata = bdata.read().decode('utf-8')
+                            with open(self._CACHE_DIR + filename, 'w') as f:
+                                f.write(textfile.read())
 
-                    with zf.open(filename, "r") as fdata:
-                        textfile = TextIOWrapper(fdata)
-                        reereader = csv.reader(textfile, delimiter=';')
-                        rows = [row for row in reereader]
-
-                        with open(self._CACHE_DIR + filename, 'w') as f:
-                            f.write(textfile.read())
-
-                    self.filename = filename
-                except KeyError:
-                    raise ValueError('Coeficients from REE not found')
-                finally:
-                    zf.close()
+                        self.filename = filename
+                    except KeyError:
+                        raise ValueError('Coeficients from REE not found')
             else:
                 print ("No data")
                 raise ValueError('Coeficients from REE not found')
