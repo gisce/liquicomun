@@ -82,8 +82,8 @@ class Grcosdnc(REEformat):
 
 class Prmncur(REEformat):
     """
-    Coste medio horario en el mercado de producción (EUR/MWh BC)
-    Comercializadores, excepto de último recurso, y consumidores directos
+    Coste medio horario en el mercado de produccion (EUR/MWh BC)
+    Comercializadores, excepto de ultimo recurso, y consumidores directos
     PMD + POS + PC3 from XN_liquicom_YYYYMM.zip esios file
     """
     name = 'prmncur'
