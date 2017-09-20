@@ -97,8 +97,8 @@ class REEformat(Component):
             raise ValueError('No ESIOS Token')
         name = re.split('_', file)[-3]
         version = re.split('_', file)[-4]
-        #try:
-        if True:
+        
+        try:
             start_date = datetime.strptime(file[-17:-9], "%Y%m%d")
             end_date = datetime.strptime(file[-8:], "%Y%m%d")
 
@@ -108,12 +108,12 @@ class REEformat(Component):
             if zdata:
                 import zipfile
                 c = BytesIO(zdata)
+
                 with zipfile.ZipFile(c) as zf:
                     version = zf.namelist()[0][:2]
                     file_dates = file[-17:]
                     filename = '%(version)s_%(name)s_%(file_dates)s' % locals()
 
-                    print (filename)
                     try:
                         with zf.open(filename, "r") as fdata:
                             textfile = TextIOWrapper(fdata)
@@ -123,19 +123,17 @@ class REEformat(Component):
                             with open(self._CACHE_DIR + filename, 'w') as f:
                                 f.write(textfile.read())
 
-                        self.filename = filename
                     except KeyError:
                         raise ValueError('Coeficients from REE not found')
             else:
                 print ("No data")
                 raise ValueError('Coeficients from REE not found')
 
-        """
         except Exception as e:
             print ("Main try")
             raise ValueError('Coeficients from REE not found')
-        """
 
+        self.filename = filename
         return rows
 
     def check_data(self, rows):
