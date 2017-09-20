@@ -5,6 +5,7 @@ from datetime import datetime, date, timedelta
 from io import BytesIO, StringIO, TextIOWrapper
 from esios import Esios
 import csv
+import zipfile
 import sys
 
 
@@ -97,7 +98,7 @@ class REEformat(Component):
             raise ValueError('No ESIOS Token')
         name = re.split('_', file)[-3]
         version = re.split('_', file)[-4]
-        
+
         try:
             start_date = datetime.strptime(file[-17:-9], "%Y%m%d")
             end_date = datetime.strptime(file[-8:], "%Y%m%d")
@@ -106,7 +107,6 @@ class REEformat(Component):
             zdata = e.liquicomun().download(start_date, end_date)
 
             if zdata:
-                import zipfile
                 c = BytesIO(zdata)
 
                 with zipfile.ZipFile(c) as zf:
