@@ -10,6 +10,8 @@ import fnmatch
 import os
 import calendar
 
+from builtins import range
+
 import sys
 sys.path.insert(0, '.')
 
@@ -34,41 +36,6 @@ with description('Creating a component'):
             c = formats.Component()
             assert c.version == datetime.now().strftime('%Y%m%d%H%M%S')
 
-
-
-
-
-with description('formats.Perd20A component from esios'):
-    with before.all:
-        self.data_path = './spec/pool/data/'
-        ESIOS_TOKEN = os.getenv('ESIOS_TOKEN')
-        self.token = ESIOS_TOKEN
-
-    with context('C3_perd20A_20141001_20141031'):
-        with before.all:
-            self.p = formats.Perd20A(self.data_path + 'C3_perd20A_20141001_20141031', token=self.token)
-
-        with it('should be year 2014'):
-            assert self.p.year == 2014
-        with it('should be month 10'):
-            assert self.p.month == 10
-
-        with it('should be 31 days'):
-            assert len(self.p.matrix) == 31
-
-        with it('has version 20150917110842'):
-            assert self.p.version == '20150917110842'
-
-        with it('has 18.0 in Day 10 hour 10'):
-            assert self.p.get(10, 10) == 18.0
-
-        with it('shoult not be 0.0 in Day 26 hour 24 (leap hour)'):
-            assert self.p.get(26, 24) != 0.0
-
-        with it('should return tuesday (3) on Day 16'):
-            assert self.p.get_weekday(16) == 3
-
-"""
 
 
 with description('REE components download'):
@@ -111,7 +78,7 @@ with description('REE components download'):
         with it('should clear cache only prefix C7 and everything'):
             directory = formats.REEformat._CACHE_DIR
             formats.REEformat.clear_cache()
-            for num in xrange(1, 10):
+            for num in range(1, 10):
                 f = open('%sC%s_ree_123457890' % (directory, num,), 'w')
                 f.write('GISCE')
                 f.close()
@@ -181,12 +148,39 @@ with description('REE components download'):
                 assert res2.origin == 'cache'
                 assert res1.file_version in ('C5', 'C6')
                 assert res2.file_version in ('C5', 'C6')
+
+
+with description('formats.Perd20A component from esios'):
+    with before.all:
+        self.data_path = './spec/pool/data/'
+        ESIOS_TOKEN = os.getenv('ESIOS_TOKEN')
+        self.token = ESIOS_TOKEN
+
+    with context('C3_perd20A_20141001_20141031'):
+        with before.all:
+            self.p = formats.Perd20A(self.data_path + 'C3_perd20A_20141001_20141031', token=self.token)
+
+        with it('should be year 2014'):
+            assert self.p.year == 2014
+        with it('should be month 10'):
+            assert self.p.month == 10
+
+        with it('should be 31 days'):
+            assert len(self.p.matrix) == 31
+
+        with it('has version 20150917110842'):
+            assert self.p.version == '20150917110842'
+
+        with it('has 18.0 in Day 10 hour 10'):
+            assert self.p.get(10, 10) == 18.0
+
+        with it('shoult not be 0.0 in Day 26 hour 24 (leap hour)'):
+            assert self.p.get(26, 24) != 0.0
+
+        with it('should return tuesday (3) on Day 16'):
+            assert self.p.get_weekday(16) == 3
+
 """
-
-
-
-"""
-
 with description('Perd21A component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
