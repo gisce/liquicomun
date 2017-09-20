@@ -2,8 +2,9 @@ import re
 import fnmatch
 import os
 from datetime import datetime, date, timedelta
-from io import StringIO
+from io import BytesIO
 from esios import Esios
+import csv
 
 
 from .component import Component
@@ -95,23 +96,28 @@ class REEformat(Component):
             raise ValueError('No ESIOS Token')
         name = re.split('_', file)[-3]
         version = re.split('_', file)[-4]
-        try:
+        #try:
+        if True:
             start_date = datetime.strptime(file[-17:-9], "%Y%m%d")
             end_date = datetime.strptime(file[-8:], "%Y%m%d")
-            from esios import Esios
             #from esios.archives import Liquicomun
+
+            print (start_date, end_date)
 
             e = Esios(self.token)
             zdata = e.liquicomun().download(start_date, end_date)
+
             if zdata:
                 import zipfile
-                c = StringIO(zdata)
+                c = BytesIO(zdata)
                 zf = zipfile.ZipFile(c)
                 version = zf.namelist()[0][:2]
                 file_dates = file[-17:]
                 filename = '%(version)s_%(name)s_%(file_dates)s' % locals()
+
+                print (filename)
                 try:
-                    fdata = StringIO(zf.read(filename))
+                    fdata = BytesIO(zf.read(filename))
                     reereader = csv.reader(fdata, delimiter=';')
                     rows = [row for row in reereader]
                     f = open(self._CACHE_DIR + filename, 'w')
@@ -123,9 +129,14 @@ class REEformat(Component):
                 finally:
                     zf.close()
             else:
+                print ("No data")
                 raise ValueError('Coeficients from REE not found')
+
+        """
         except Exception as e:
+            print ("Main try")
             raise ValueError('Coeficients from REE not found')
+        """
 
         return rows
 
