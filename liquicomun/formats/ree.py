@@ -118,6 +118,7 @@ class REEformat(Component):
 
                     #try:
                     if True:
+                        print (zf.namelist())
                         # Open the needed file inside the Zip
                         with zf.open(filename, "r") as fdata:
                             # Load the CSV
