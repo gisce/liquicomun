@@ -2,9 +2,10 @@ import re
 import fnmatch
 import os
 from datetime import datetime, date, timedelta
-from io import BytesIO
+from io import BytesIO, StringIO, TextIOWrapper
 from esios import Esios
 import csv
+import sys
 
 
 from .component import Component
@@ -117,12 +118,21 @@ class REEformat(Component):
 
                 print (filename)
                 try:
-                    fdata = BytesIO(zf.read(filename))
-                    reereader = csv.reader(fdata, delimiter=';')
-                    rows = [row for row in reereader]
-                    f = open(self._CACHE_DIR + filename, 'w')
-                    f.write(fdata.buf)
-                    f.close()
+                    #if sys.version > '3':
+                    #    the_file =
+                    #with zf.open(filename) as fdata:
+
+                    #bdata = BytesIO(zf.read(filename))
+                    #fdata = bdata.read().decode('utf-8')
+
+                    with zf.open(filename, "r") as fdata:
+                        textfile = TextIOWrapper(fdata)
+                        reereader = csv.reader(textfile, delimiter=';')
+                        rows = [row for row in reereader]
+
+                        with open(self._CACHE_DIR + filename, 'w') as f:
+                            f.write(textfile.read())
+
                     self.filename = filename
                 except KeyError:
                     raise ValueError('Coeficients from REE not found')
