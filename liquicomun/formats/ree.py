@@ -62,7 +62,7 @@ class REEformat(Component):
                 self.filename = file
                 if (os.path.isfile(self._CACHE_DIR + file)
                         and version not in self.no_cache):
-                    with open(self._CACHE_DIR + file, 'rb') as csvfile:
+                    with open(self._CACHE_DIR + file, 'r') as csvfile:
                         found_version = version
                         reereader = csv.reader(csvfile, delimiter=';')
                         rows = [row for row in reereader]
