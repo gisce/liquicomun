@@ -116,7 +116,8 @@ class REEformat(Component):
                     file_dates = file[-17:]
                     filename = '%(version)s_%(name)s_%(file_dates)s' % locals()
 
-                    try:
+                    #try:
+                    if True:
                         # Open the needed file inside the Zip
                         with zf.open(filename, "r") as fdata:
                             # Load the CSV
@@ -129,8 +130,10 @@ class REEformat(Component):
                             # Extract current file to disk to keep a CACHE version
                             zf.extract(member=filename, path=self._CACHE_DIR)
 
+                    """
                     except KeyError:
                         raise ValueError('Coeficients from REE not found')
+                    """
             else:
                 print ("No data")
                 raise ValueError('Coeficients from REE not found')
