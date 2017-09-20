@@ -45,6 +45,8 @@ class REEformat(Component):
         if not re.search(self.filename_re, file):
             raise ValueError('Bad %s file name' % self.name)
 
+
+        print (self._CACHE_DIR  + file)
         self.filename = os.path.basename(file)
 
         if os.path.isfile(file):
@@ -99,7 +101,8 @@ class REEformat(Component):
         name = re.split('_', file)[-3]
         version = re.split('_', file)[-4]
 
-        try:
+        #try:
+        if True:
             start_date = datetime.strptime(file[-17:-9], "%Y%m%d")
             end_date = datetime.strptime(file[-8:], "%Y%m%d")
 
@@ -115,13 +118,17 @@ class REEformat(Component):
                     filename = '%(version)s_%(name)s_%(file_dates)s' % locals()
 
                     try:
+                        # Open the needed file inside the Zip
                         with zf.open(filename, "r") as fdata:
+                            # Load the CSV
                             textfile = TextIOWrapper(fdata)
                             reereader = csv.reader(textfile, delimiter=';')
+
+                            # Extract the rows list using the the csv reader
                             rows = [row for row in reereader]
 
-                            with open(self._CACHE_DIR + filename, 'w') as f:
-                                f.write(textfile.read())
+                            # Extract current file to disk to keep a CACHE version
+                            zf.extract(member=filename, path=self._CACHE_DIR)
 
                     except KeyError:
                         raise ValueError('Coeficients from REE not found')
@@ -129,9 +136,11 @@ class REEformat(Component):
                 print ("No data")
                 raise ValueError('Coeficients from REE not found')
 
+        """
         except Exception as e:
             print ("Main try")
             raise ValueError('Coeficients from REE not found')
+        """
 
         self.filename = filename
         return rows
