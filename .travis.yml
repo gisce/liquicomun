@@ -10,4 +10,4 @@ install:
   - "pip install ."
 script:
   - mamba --enable-coverage
-  - coverage report
+  - coverage report --omit *virtualenv*
