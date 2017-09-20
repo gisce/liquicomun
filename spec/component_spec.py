@@ -20,8 +20,6 @@ from liquicomun import formats
 def touch(filepath, hora):
     os.utime(filepath, (hora, hora))
 
-"""
-
 with description('Creating a component'):
     with context('If no params is given'):
         with it("has month and year as today's year and month"):
@@ -402,7 +400,6 @@ with description('Perd31A component from esios'):
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
 
-"""
 
 with description('Perd61 component from esios'):
     with before.all:
@@ -436,15 +433,16 @@ with description('Perd61 component from esios'):
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
 
+"""
 with description('Perd61A component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
         ESIOS_TOKEN = os.getenv('ESIOS_TOKEN')
         self.token = ESIOS_TOKEN
 
-    with context('C2_perdg61A_20150901_20150930'):
+    with context('C2_perdg61A_20160901_20160930'):
         with before.all:
-            self.p = formats.Perd61A(self.data_path + 'C2_perdg61A_20150901_20150930', token=self.token)
+            self.p = formats.Perd61A(self.data_path + 'C2_perdg61A_20160901_20160930', token=self.token)
 
         with it('should be year 2015'):
             assert self.p.year == 2015
@@ -471,9 +469,9 @@ with description('Perd61B component from esios'):
         ESIOS_TOKEN = os.getenv('ESIOS_TOKEN')
         self.token = ESIOS_TOKEN
 
-    with context('C2_perdg61B_20150901_20150930'):
+    with context('C2_perdg61B_20160901_20160930'):
         with before.all:
-            self.p = formats.Perd61B(self.data_path + 'C2_perdg61B_20150901_20150930', token=self.token)
+            self.p = formats.Perd61B(self.data_path + 'C2_perdg61B_20160901_20160930', token=self.token)
 
         with it('should be year 2015'):
             assert self.p.year == 2015
@@ -493,3 +491,5 @@ with description('Perd61B component from esios'):
 
         with it('should return wednesday (2) on Day 16'):
             assert self.p.get_weekday(16) == 2
+
+"""
