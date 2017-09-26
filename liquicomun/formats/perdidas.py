@@ -100,6 +100,21 @@ class Perd61B(REEformat):
 
 
 available_tariffs = {
+    '2.0A': 'perd20A',
+    '2.0DHA': 'perd20D',
+    '2.0DHS': 'perd20DHS',
+    '2.1A': 'perd21A',
+    '2.1DHA': 'perd21D',
+    '2.1DHS': 'perd21DHS',
+    '3.0A': 'perd30A',
+    '3.1A': 'perd31A',
+    '6.1': 'perdg61',
+    '6.1A': 'perdg61A',
+    '6.1B': 'perdg61B',
+}
+
+
+available_perd_tariffs = {
     'perd20A': Perd20A,
     'perd20D': Perd20DH,
     'perd20DHS': Perd20DHS,
@@ -120,7 +135,11 @@ class Perdidas(object):
         assert len(filename) > 1 and filename[1], "Filename '{}' is not valid".format(file)
         tariff = filename[1]
 
-        # Return the class depending on the filename or raise an error if not matched
-        assert tariff in available_tariffs, "Losses for tariff '{}' not defined as available tariff type ('{}')".format(tariff, available_tariffs.keys())
-        loss_tariff = available_tariffs[tariff]
+        try:
+            # Return the class depending on the filename or raise an error if not matched
+            assert tariff in available_perd_tariffs, "Losses for tariff '{}' not defined as available tariff type ('{}')".format(tariff, available_perd_tariffs.keys())
+            loss_tariff = available_perd_tariffs[tariff]
+        except:
+            assert tariff in available_tariffs, "Losses for tariff '{}' not defined as available tariff type ('{}')".format(tariff, available_tariffs.keys())
+            loss_tariff = available_perd_tariffs[available_tariffs[tariff]]
         return loss_tariff(file=file, token=token)
