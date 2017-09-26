@@ -1,20 +1,5 @@
 from .ree import REEformat
 
-available_tariffs = {
-    'perd20A': Perd20A,
-    'perd20D': Perd20DH,
-    'perd20DHS': Perd20DHS,
-    'perd21A': Perd21A,
-    'perd21D': Perd21DH,
-    'perd21DHS': Perd21DHS,
-    'perd30A': Perd30A,
-    'perd31A': Perd31A,
-    'perdg61': Perd61,
-    'perdg61A': Perd61A,
-    'perdg61B': Perd61B,
-}
-
-
 class Perd20A(REEformat):
     ''' PERD20A from XN_liquicom_YYYYMM.zip esios file'''
     name = 'perd20A'
@@ -86,6 +71,7 @@ class Perd31A(REEformat):
     def __init__(self, file=None, token=None):
         super(Perd31A, self).__init__(file=file, token=token)
 
+
 class Perd61(REEformat):
     ''' PERDG61 from XN_liquicom_YYYYMM.zip esios file'''
     name = 'perdg61'
@@ -94,6 +80,7 @@ class Perd61(REEformat):
     def __init__(self, file=None, token=None):
         super(Perd61, self).__init__(file=file, token=token)
 
+
 class Perd61A(REEformat):
     ''' PERDG61A from XN_liquicom_YYYYMM.zip esios file'''
     name = 'perdg61A'
@@ -101,6 +88,7 @@ class Perd61A(REEformat):
 
     def __init__(self, file=None, token=None):
         super(Perd61A, self).__init__(file=file, token=token)
+
 
 class Perd61B(REEformat):
     ''' PERDG61B from XN_liquicom_YYYYMM.zip esios file'''
@@ -111,6 +99,20 @@ class Perd61B(REEformat):
         super(Perd61B, self).__init__(file=file, token=token)
 
 
+available_tariffs = {
+    'perd20A': Perd20A,
+    'perd20D': Perd20DH,
+    'perd20DHS': Perd20DHS,
+    'perd21A': Perd21A,
+    'perd21D': Perd21DH,
+    'perd21DHS': Perd21DHS,
+    'perd30A': Perd30A,
+    'perd31A': Perd31A,
+    'perdg61': Perd61,
+    'perdg61A': Perd61A,
+    'perdg61B': Perd61B,
+}
+
 class Perdidas(REEformat):
     ''' A generic Perdidas class '''
     def __init__(self, file=None, token=None):
@@ -119,6 +121,6 @@ class Perdidas(REEformat):
         tariff = filename[1]
 
         # Return the class depending on the filename or raise an error if not matched
-        assert tariff in available_tariffs, "Losses for tariff '{}' not defined as available tariff type ('{}')".format(tariff, available_tariffs)
+        assert tariff in available_tariffs, "Losses for tariff '{}' not defined as available tariff type ('{}')".format(tariff, available_tariffs.keys())
         loss_tariff = available_tariffs[tariff]
         return loss_tariff(file=file, token=token)
