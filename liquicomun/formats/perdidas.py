@@ -1,17 +1,17 @@
 from .ree import REEformat
 
 available_tariffs = {
-    '2.0A': Perd20A,
-    '2.0DHA': Perd20DH,
-    '2.0DHS': Perd20DHS,
-    '2.1A': Perd21A,
-    '2.1DHA': Perd21DH,
-    '2.1DHS': Perd21DHS,
-    '3.0A': Perd31A,
-    '3.1A': Perd21A,
-    '6.1': Perd61,
-    '6.1A': Perd61A,
-    '6.1B': Perd61B,
+    'perd20A': Perd20A,
+    'perd20D': Perd20DH,
+    'perd20DHS': Perd20DHS,
+    'perd21A': Perd21A,
+    'perd21D': Perd21DH,
+    'perd21DHS': Perd21DHS,
+    'perd30A': Perd30A,
+    'perd31A': Perd31A,
+    'perdg61': Perd61,
+    'perdg61A': Perd61A,
+    'perdg61B': Perd61B,
 }
 
 
