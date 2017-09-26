@@ -1,7 +1,7 @@
-
 import calendar
 from datetime import datetime, date, timedelta
 from liquicomun.datetime.season import last_sunday
+from builtins import range
 
 class Component(object):
     '''Component to calculate cost'''
@@ -132,10 +132,10 @@ class Component(object):
             raise ValueError('Start day out of bounds')
 
         empty_day = [0] * 25
-        for day in xrange(0, start_day - 1):
+        for day in range(0, start_day - 1):
             self.matrix[day] = empty_day
         if end_day is not None:
-            for day in xrange(end_day, self.end_date.day):
+            for day in range(end_day, self.end_date.day):
                 self.matrix[day] = empty_day
         return self
 
