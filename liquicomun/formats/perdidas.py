@@ -113,9 +113,9 @@ available_tariffs = {
     'perdg61B': Perd61B,
 }
 
-class Perdidas(REEformat):
+class Perdidas(object):
     ''' A generic Perdidas class '''
-    def __init__(self, file=None, token=None):
+    def __new__(self, file=None, token=None):
         filename = file.split("_")
         assert len(filename) > 1 and filename[1], "Filename '{}' is not valid".format(file)
         tariff = filename[1]
