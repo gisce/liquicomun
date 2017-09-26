@@ -98,22 +98,6 @@ class Perd61B(REEformat):
     def __init__(self, file=None, token=None):
         super(Perd61B, self).__init__(file=file, token=token)
 
-
-available_tariffs = {
-    '2.0A': 'perd20A',
-    '2.0DHA': 'perd20D',
-    '2.0DHS': 'perd20DHS',
-    '2.1A': 'perd21A',
-    '2.1DHA': 'perd21D',
-    '2.1DHS': 'perd21DHS',
-    '3.0A': 'perd30A',
-    '3.1A': 'perd31A',
-    '6.1': 'perdg61',
-    '6.1A': 'perdg61A',
-    '6.1B': 'perdg61B',
-}
-
-
 available_perd_tariffs = {
     'perd20A': Perd20A,
     'perd20D': Perd20DH,
@@ -140,6 +124,6 @@ class Perdidas(object):
             assert tariff in available_perd_tariffs, "Losses for tariff '{}' not defined as available tariff type ('{}')".format(tariff, available_perd_tariffs.keys())
             loss_tariff = available_perd_tariffs[tariff]
         except:
-            assert tariff in available_tariffs, "Losses for tariff '{}' not defined as available tariff type ('{}')".format(tariff, available_tariffs.keys())
-            loss_tariff = available_perd_tariffs[available_tariffs[tariff]]
+            assert tariff in tariffs_to_losses, "Losses for tariff '{}' not defined as available tariff type ('{}')".format(tariff, tariffs_to_losses.keys())
+            loss_tariff = available_perd_tariffs[tariffs_to_losses[tariff]]
         return loss_tariff(file=file, token=token)
