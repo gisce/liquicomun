@@ -19,6 +19,7 @@ from liquicomun import formats
 
 def touch(filepath, hora):
     os.utime(filepath, (hora, hora))
+"""
 
 with description('Creating a component'):
     with context('If no params is given'):
@@ -145,7 +146,7 @@ with description('REE components download'):
                 assert res1.file_version in ('C5', 'C6')
                 assert res2.file_version in ('C5', 'C6')
 
-
+"""
 with description('formats.Perd20A component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
@@ -175,6 +176,12 @@ with description('formats.Perd20A component from esios'):
 
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
+
+        with it('should be created using the abstract Perdias class '):
+            perdidas = formats.Perdidas(self.data_path + 'C3_perd20A_20141001_20141031', token=self.token)
+            perdidas_str = str(perdidas)
+            p_str = str(self.p)
+            assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
 
 with description('Perd21A component from esios'):
     with before.all:
@@ -207,6 +214,12 @@ with description('Perd21A component from esios'):
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
 
+        with it('should be created using the abstract Perdias class '):
+            perdidas = formats.Perdidas(self.data_path + 'C3_perd21A_20141001_20141031', token=self.token)
+            perdidas_str = str(perdidas)
+            p_str = str(self.p)
+            assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
+
 with description('Perd20DH component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
@@ -236,6 +249,12 @@ with description('Perd20DH component from esios'):
 
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
+
+        with it('should be created using the abstract Perdias class '):
+            perdidas = formats.Perdidas(self.data_path + 'C3_perd20D_20141001_20141031', token=self.token)
+            perdidas_str = str(perdidas)
+            p_str = str(self.p)
+            assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
 
 with description('Perd21DH component from esios'):
     with before.all:
@@ -268,6 +287,12 @@ with description('Perd21DH component from esios'):
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
 
+        with it('should be created using the abstract Perdias class '):
+            perdidas = formats.Perdidas(self.data_path + 'C3_perd21D_20141001_20141031', token=self.token)
+            perdidas_str = str(perdidas)
+            p_str = str(self.p)
+            assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
+
 with description('Perd20DHS component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
@@ -298,6 +323,13 @@ with description('Perd20DHS component from esios'):
 
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
+
+        with it('should be created using the abstract Perdias class '):
+            perdidas = formats.Perdidas(self.data_path + 'C3_perd20DHS_20141001_20141031', token=self.token)
+            perdidas_str = str(perdidas)
+            p_str = str(self.p)
+            assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
+
 
 with description('Perd21DHS component from esios'):
     with before.all:
@@ -330,6 +362,12 @@ with description('Perd21DHS component from esios'):
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
 
+        with it('should be created using the abstract Perdias class '):
+            perdidas = formats.Perdidas(self.data_path + 'C3_perd21DHS_20141001_20141031', token=self.token)
+            perdidas_str = str(perdidas)
+            p_str = str(self.p)
+            assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
+
 with description('Perd30A component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
@@ -360,6 +398,12 @@ with description('Perd30A component from esios'):
 
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
+
+        with it('should be created using the abstract Perdias class '):
+            perdidas = formats.Perdidas(self.data_path + 'C3_perd30A_20141001_20141031', token=self.token)
+            perdidas_str = str(perdidas)
+            p_str = str(self.p)
+            assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
 
 with description('Perd31A component from esios'):
     with before.all:
@@ -392,6 +436,12 @@ with description('Perd31A component from esios'):
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
 
+        with it('should be created using the abstract Perdias class '):
+            perdidas = formats.Perdidas(self.data_path + 'C3_perd31A_20141001_20141031', token=self.token)
+            perdidas_str = str(perdidas)
+            p_str = str(self.p)
+            assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
+
 
 with description('Perd61 component from esios'):
     with before.all:
@@ -423,6 +473,12 @@ with description('Perd61 component from esios'):
 
         with it('should return tuesday (3) on Day 16'):
             assert self.p.get_weekday(16) == 3
+
+        with it('should be created using the abstract Perdias class '):
+            perdidas = formats.Perdidas(self.data_path + 'C3_perdg61_20141001_20141031', token=self.token)
+            perdidas_str = str(perdidas)
+            p_str = str(self.p)
+            assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
 
 """
 with description('Perd61A component from esios'):
