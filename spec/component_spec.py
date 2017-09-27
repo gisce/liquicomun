@@ -17,8 +17,13 @@ sys.path.insert(0, '.')
 
 from liquicomun import formats
 
+import logging
+logging.basicConfig(level=logging.ERROR)
+
+
 def touch(filepath, hora):
     os.utime(filepath, (hora, hora))
+"""
 
 with description('Creating a component'):
     with context('If no params is given'):
@@ -144,6 +149,7 @@ with description('REE components download'):
                 assert res2.origin == 'cache'
                 assert res1.file_version in ('C5', 'C6')
                 assert res2.file_version in ('C5', 'C6')
+    """
 
 with description('formats.Perd20A component from esios'):
     with before.all:
@@ -152,6 +158,7 @@ with description('formats.Perd20A component from esios'):
         self.token = ESIOS_TOKEN
 
     with context('C3_perd20A_20141001_20141031'):
+        """
         with before.all:
             self.p = formats.Perd20A(self.data_path + 'C3_perd20A_20141001_20141031', token=self.token)
 
@@ -180,21 +187,18 @@ with description('formats.Perd20A component from esios'):
             perdidas_str = str(perdidas)
             p_str = str(self.p)
             assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
-
-
+        """
         with it('should download C1 for a year ago if version is enforced'):
             formats.REEformat.clear_cache()
             filedate = date.today() - relativedelta(years=1)
             numdays = calendar.monthrange(filedate.year, filedate.month)[1]
-            ym = '%4d%02d' % (filedate.year, filedate.month)
-            filename = 'C1_prmncur_%(ym)s01_%(ym)s%(numdays)s' % locals()
-            res1 = formats.Perdidas(self.data_path + 'C3_perd20A_20141001_20141031', token=self.token, version="C1")
-            res2 = formats.Perd20A(self.data_path + 'C3_perd20A_20141001_20141031', token=self.token, version="C1")
+            res1 = formats.Perdidas(self.data_path + 'C1_perd20A_20171001_20171031', token=self.token, version="C1")
+            res2 = formats.Perd20A(self.data_path + 'C1_perd20A_20171001_20171031', token=self.token, version="C1")
             assert res1.origin == 'server'
-            assert res2.origin == 'cache'
-            assert res1.file_version in ('C1')
+            assert res2.origin == 'server'
+            assert res1.file_version in ('C1'), "{}".format(res1.file_version)
             assert res2.file_version in ('C1')
-
+    """
 
 with description('Perd21A component from esios'):
     with before.all:
@@ -493,7 +497,9 @@ with description('Perd61 component from esios'):
             p_str = str(self.p)
             assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
 
-"""
+    """
+    """
+
 with description('Perd61A component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
@@ -552,4 +558,4 @@ with description('Perd61B component from esios'):
         with it('should return wednesday (2) on Day 16'):
             assert self.p.get_weekday(16) == 2
 
-"""
+    """
