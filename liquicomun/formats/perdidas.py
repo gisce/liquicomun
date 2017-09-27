@@ -5,8 +5,8 @@ class Perd20A(REEformat):
     name = 'perd20A'
     file_tmpl = 'perd20A'
 
-    def __init__(self, file=None, token=None):
-        super(Perd20A, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd20A, self).__init__(file=file, token=token, version=version)
 
 
 class Perd21A(REEformat):
@@ -14,8 +14,8 @@ class Perd21A(REEformat):
     name = 'perd21A'
     file_tmpl = 'perd21A'
 
-    def __init__(self, file=None, token=None):
-        super(Perd21A, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd21A, self).__init__(file=file, token=token, version=version)
 
 
 class Perd20DH(REEformat):
@@ -23,8 +23,8 @@ class Perd20DH(REEformat):
     name = 'perd20D'
     file_tmpl = 'perd20D'
 
-    def __init__(self, file=None, token=None):
-        super(Perd20DH, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd20DH, self).__init__(file=file, token=token, version=version)
 
 
 class Perd21DH(REEformat):
@@ -32,8 +32,8 @@ class Perd21DH(REEformat):
     name = 'perd21D'
     file_tmpl = 'perd21D'
 
-    def __init__(self, file=None, token=None):
-        super(Perd21DH, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd21DH, self).__init__(file=file, token=token, version=version)
 
 
 class Perd20DHS(REEformat):
@@ -41,8 +41,8 @@ class Perd20DHS(REEformat):
     name = 'perd20HS'
     file_tmpl = 'perd20DHS'
 
-    def __init__(self, file=None, token=None):
-        super(Perd20DHS, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd20DHS, self).__init__(file=file, token=token, version=version)
 
 
 class Perd21DHS(REEformat):
@@ -50,8 +50,8 @@ class Perd21DHS(REEformat):
     name = 'perd21DHS'
     file_tmpl = 'perd21DHS'
 
-    def __init__(self, file=None, token=None):
-        super(Perd21DHS, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd21DHS, self).__init__(file=file, token=token, version=version)
 
 
 class Perd30A(REEformat):
@@ -59,8 +59,8 @@ class Perd30A(REEformat):
     name = 'perd30A'
     file_tmpl = 'perd30A'
 
-    def __init__(self, file=None, token=None):
-        super(Perd30A, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd30A, self).__init__(file=file, token=token, version=version)
 
 
 class Perd31A(REEformat):
@@ -68,8 +68,8 @@ class Perd31A(REEformat):
     name = 'perd31A'
     file_tmpl = 'perd31A'
 
-    def __init__(self, file=None, token=None):
-        super(Perd31A, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd31A, self).__init__(file=file, token=token, version=version)
 
 
 class Perd61(REEformat):
@@ -77,8 +77,8 @@ class Perd61(REEformat):
     name = 'perdg61'
     file_tmpl = 'perdg61'
 
-    def __init__(self, file=None, token=None):
-        super(Perd61, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd61, self).__init__(file=file, token=token, version=version)
 
 
 class Perd61A(REEformat):
@@ -86,8 +86,8 @@ class Perd61A(REEformat):
     name = 'perdg61A'
     file_tmpl = 'perdg61A'
 
-    def __init__(self, file=None, token=None):
-        super(Perd61A, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd61A, self).__init__(file=file, token=token, version=version)
 
 
 class Perd61B(REEformat):
@@ -95,8 +95,8 @@ class Perd61B(REEformat):
     name = 'perdg61B'
     file_tmpl = 'perdg61B'
 
-    def __init__(self, file=None, token=None):
-        super(Perd61B, self).__init__(file=file, token=token)
+    def __init__(self, file=None, token=None, version=None):
+        super(Perd61B, self).__init__(file=file, token=token, version=version)
 
 
 tariffs_to_losses = {
@@ -129,7 +129,7 @@ available_perd_tariffs = {
 
 class Perdidas(object):
     ''' A generic Perdidas class '''
-    def __new__(self, file=None, token=None):
+    def __new__(self, file=None, token=None, version=None):
         filename = file.split("_")
         assert len(filename) > 1 and filename[1], "Filename '{}' is not valid".format(file)
         tariff = filename[1]
@@ -141,4 +141,4 @@ class Perdidas(object):
         except:
             assert tariff in tariffs_to_losses, "Losses for tariff '{}' not defined as available tariff type ('{}')".format(tariff, tariffs_to_losses.keys())
             loss_tariff = available_perd_tariffs[tariffs_to_losses[tariff]]
-        return loss_tariff(file=file, token=token)
+        return loss_tariff(file=file, token=token, version=version)
