@@ -7,6 +7,7 @@ from esios import Esios
 import csv
 import zipfile
 import sys
+import logging
 
 
 from .component import Component
@@ -50,7 +51,7 @@ class REEformat(Component):
 
         available_versions = self.version_order
         # Handle available_versions overriding with str or list
-        if version:
+        if False: #version:
             try:
                 assert type(version) == list, "Version must be a string or a list"
                 for element in version:
@@ -63,12 +64,14 @@ class REEformat(Component):
                 available_versions = [version]
 
         if os.path.isfile(file):
+            print("Entro isfile")
             with open(file, 'rb') as csvfile:
                 reereader = csv.reader(csvfile, delimiter=';')
                 rows = [row for row in reereader]
                 found_version = self.filename[:2]
                 origin = 'file'
         else:
+            print("Entro available")
             found_version = ''
             for version in available_versions:
                 file = version + file[2:]
@@ -81,7 +84,11 @@ class REEformat(Component):
                         rows = [row for row in reereader]
                         origin = 'cache'
                         break
+
+                print (version)
+
             if not found_version:
+                print ("not found")
                 rows = self.download(file)
                 found_version = self.filename[:2]
                 origin = 'server'
@@ -144,14 +151,14 @@ class REEformat(Component):
                             zf.extract(member=filename, path=self._CACHE_DIR)
 
                     except KeyError:
-                        print ("Exception opening filename inside zip try")
+                        logging.error ("Coeficients from REE not found, exception opening filename inside zip {}".format(filename))
                         raise ValueError('Coeficients from REE not found')
             else:
-                print ("No available data")
+                logging.error ("Coeficients from REE not found, No available data has been downloaded".format())
                 raise ValueError('Coeficients from REE not found')
 
         except Exception as e:
-            print ("Exception at Main try")
+            logging.error ("Coeficients from REE not found, exception processing download")
             raise ValueError('Coeficients from REE not found')
 
         self.filename = filename
