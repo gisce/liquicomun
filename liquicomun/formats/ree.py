@@ -25,7 +25,9 @@ class REEformat(Component):
     _CACHE_DIR = '/tmp/'
 
     version_order = (
-        'C7', 'A7', 'C6', 'A6', 'C5', 'A5', 'C4', 'A4', 'C3', 'A3', 'C2',
+        'C7', 'A7', 'C6',
+        #'A6', 'C5', 'C4', 'A5', 'A4',   #inconsistent formats see https://github.com/gisce/esios/pull/17
+        'C3', 'A3', 'C2',
         'A2', 'C1', 'A1'
     )
     no_cache = ('A2', 'C1', 'A1')
