@@ -181,6 +181,21 @@ with description('formats.Perd20A component from esios'):
             p_str = str(self.p)
             assert perdidas_str == p_str, "Are not the same '{} vs '{}".format(perdidas_str, p_str)
 
+
+        with it('should download C1 for a year ago if version is enforced'):
+            formats.REEformat.clear_cache()
+            filedate = date.today() - relativedelta(years=1)
+            numdays = calendar.monthrange(filedate.year, filedate.month)[1]
+            ym = '%4d%02d' % (filedate.year, filedate.month)
+            filename = 'C1_prmncur_%(ym)s01_%(ym)s%(numdays)s' % locals()
+            res1 = formats.Perdidas(self.data_path + 'C3_perd20A_20141001_20141031', token=self.token, version="C1")
+            res2 = formats.Perd20A(self.data_path + 'C3_perd20A_20141001_20141031', token=self.token, version="C1")
+            assert res1.origin == 'server'
+            assert res2.origin == 'cache'
+            assert res1.file_version in ('C1')
+            assert res2.file_version in ('C1')
+
+
 with description('Perd21A component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
