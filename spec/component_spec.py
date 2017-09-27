@@ -19,7 +19,6 @@ from liquicomun import formats
 
 def touch(filepath, hora):
     os.utime(filepath, (hora, hora))
-"""
 
 with description('Creating a component'):
     with context('If no params is given'):
@@ -146,7 +145,6 @@ with description('REE components download'):
                 assert res1.file_version in ('C5', 'C6')
                 assert res2.file_version in ('C5', 'C6')
 
-"""
 with description('formats.Perd20A component from esios'):
     with before.all:
         self.data_path = './spec/pool/data/'
