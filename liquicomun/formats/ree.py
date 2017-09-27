@@ -32,8 +32,9 @@ class REEformat(Component):
     def set_token(self, token):
         self.token = token
 
-    def __init__(self, file=None, token=None):
+    def __init__(self, file=None, token=None, version=None):
         ''' Gets file from REE or disc and stores it in cache'''
+        ''' If version is provided, ensure to fetch just this version '''
         rows = []
 
         self.set_token(token)
@@ -47,6 +48,20 @@ class REEformat(Component):
 
         self.filename = os.path.basename(file)
 
+        available_versions = self.version_order
+        # Handle available_versions overriding with str or list
+        if version:
+            try:
+                assert type(version) == list, "Version must be a string or a list"
+                for element in version:
+                    assert element in self.version_order, "One of provided element versions ['{}'] is not defined as available on ESIOS".format(element, self.version_order)
+                available_versions = version
+
+            except:
+                assert type(version) == str, "Version must be a string or a list"
+                assert version in self.version_order, "Provided version '{}' is not defined as available on ESIOS".format(version, self.version_order)
+                available_versions = [version]
+
         if os.path.isfile(file):
             with open(file, 'rb') as csvfile:
                 reereader = csv.reader(csvfile, delimiter=';')
@@ -55,7 +70,7 @@ class REEformat(Component):
                 origin = 'file'
         else:
             found_version = ''
-            for version in self.version_order:
+            for version in available_versions:
                 file = version + file[2:]
                 self.filename = file
                 if (os.path.isfile(self._CACHE_DIR + file)
@@ -129,14 +144,14 @@ class REEformat(Component):
                             zf.extract(member=filename, path=self._CACHE_DIR)
 
                     except KeyError:
-                        print ("Opening filename inside zip try")
+                        print ("Exception opening filename inside zip try")
                         raise ValueError('Coeficients from REE not found')
             else:
-                print ("No data")
+                print ("No available data")
                 raise ValueError('Coeficients from REE not found')
 
         except Exception as e:
-            print ("Main try")
+            print ("Exception at Main try")
             raise ValueError('Coeficients from REE not found')
 
         self.filename = filename
