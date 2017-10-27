@@ -1,0 +1,3 @@
+https://github.com/gisce/esios/archive/master.zip
+pytz
+future
