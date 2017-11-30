@@ -32,3 +32,17 @@ with description('A new'):
                     loss = Perdida(**called['by_dict'])
                     loss_using_file = Perdida(filename = called['by_filename'])
                     assert loss.matrix == loss_using_file.matrix, "Results must match calling it with an scenario or with a filename"
+
+            with it('must be performed as expected if subsystem is provided'):
+                with spec_VCR.use_cassette('losses.yaml'):
+                    #formats.REEformat.clear_cache()
+                    to_call_baleares = dict(called['by_dict'])
+                    to_call_baleares['subsystem'] = 'baleares'
+
+                    to_call_canarias = dict(called['by_dict'])
+                    to_call_canarias['subsystem'] = 'canarias'
+
+                    loss_baleares = Perdida(**to_call_baleares)
+                    loss_canarias = Perdida(**to_call_canarias)
+
+                    assert loss_baleares.matrix != loss_canarias.matrix, "Results must match calling it with an scenario or with a filename"
