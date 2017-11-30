@@ -17,7 +17,7 @@ called = {
         'date_start': '20171001',
         'date_end': '20171031',
     },
-    "by_filename": "A1_perd20A_20171001_20171031"
+    "by_filename": "C2_perd20A_20171001_20171031"
 }
 
 
@@ -30,4 +30,5 @@ with description('A new'):
                 with spec_VCR.use_cassette('losses.yaml'):
                     #formats.REEformat.clear_cache()
                     loss = Perdida(**called['by_dict'])
-                    print (loss.matrix)
+                    loss_using_file = Perdida(filename = called['by_filename'])
+                    assert loss.matrix == loss_using_file.matrix, "Results must match calling it with an scenario or with a filename"
