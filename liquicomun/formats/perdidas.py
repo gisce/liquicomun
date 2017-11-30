@@ -7,6 +7,14 @@ def REE_perd_name(subsystem):
     }.get(subsystem, 'Sperd')
 
 
+# REE subsystems name //not performed automatically to be able to change it easily if REE change the codes
+REE_subsystems_name = {
+    'baleares': 'BALEARES',
+    'canarias': 'CANARIAS',
+    'ceuta': 'CEUTA',
+    'melilla': 'MELILLA',
+}
+
 tariff_to_REEtariff = {
     '2.0A': '20A',
     '2.0DHA': '20D',
@@ -73,11 +81,13 @@ class Perdida(REEformat):
                 version = request['version']
 
             # Optional subsystem. By default none (peninsula)
+            subsystem_REE = ""
             if "subsystem" in request:
                 assert  request['subsystem'] and type(request['subsystem']) == str
                 subsystem = request['subsystem']
+                subsystem_REE = "_{}".format(REE_subsystems_name[subsystem])
 
-            REEfile = REE_perd_name(subsystem) + tariff
+            REEfile = REE_perd_name(subsystem) + tariff + subsystem_REE
 
             filename = "{version}_{REEfile}_{date_start}_{date_end}".format(
                 version=version,
