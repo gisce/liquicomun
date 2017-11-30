@@ -40,9 +40,12 @@ with description('A new'):
                     to_call_baleares['subsystem'] = 'baleares'
 
                     to_call_canarias = dict(called['by_dict'])
-                    to_call_canarias['subsystem'] = 'canarias'
+                    to_call_canarias['subsystem'] = 'peninsula'
 
                     loss_baleares = Perdida(**to_call_baleares)
                     loss_canarias = Perdida(**to_call_canarias)
+
+                    print loss_baleares.matrix[0]
+                    print loss_canarias.matrix[0]
 
                     assert loss_baleares.matrix != loss_canarias.matrix, "Results must match calling it with an scenario or with a filename"
