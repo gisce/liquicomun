@@ -47,21 +47,18 @@ class REEformat(Component):
             raise ValueError('No File')
 
         if not re.search(self.file_name_re, filename):
-            print("File '{}' re '{}', result '{}'".format(filename, self.file_name_re,  re.search(self.file_name_re, filename)))
             raise ValueError('Bad %s file name' % self.name)
 
         self.filename = os.path.basename(filename)
 
         available_versions = self.version_order
         if os.path.isfile(filename):
-            print("Entro isfile")
             with open(filename, 'rb') as csvfile:
                 reereader = csv.reader(csvfile, delimiter=';')
                 rows = [row for row in reereader]
                 found_version = self.filename[:2]
                 origin = 'file'
         else:
-            print("Entro available")
             found_version = ''
             for version in available_versions:
                 filename = version + filename[2:]
@@ -75,10 +72,7 @@ class REEformat(Component):
                         origin = 'cache'
                         break
 
-                print (version)
-
             if not found_version:
-                print ("not found")
                 rows = self.download(filename)
                 found_version = self.filename[:2]
                 origin = 'server'

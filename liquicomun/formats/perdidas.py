@@ -43,7 +43,6 @@ class Perdida(REEformat):
             version = filename[-1]
 
         else:
-            print ("detailed")
             # If no filename is provided, expect reach tariff, date_start and date_end
             assert "tariff" in request and request['tariff'] and type(request['tariff']) == str
             assert "date_start" in request and request['date_start'] and type(request['date_start']) == str
