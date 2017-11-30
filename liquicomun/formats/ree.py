@@ -47,6 +47,7 @@ class REEformat(Component):
             raise ValueError('No File')
 
         if not re.search(self.filename_re, file):
+            print("File '{}' re '{}', result '{}'".format(file, self.filename_re,  re.search(self.filename_re, file)))
             raise ValueError('Bad %s file name' % self.name)
 
         self.filename = os.path.basename(file)
@@ -118,6 +119,8 @@ class REEformat(Component):
                     os.unlink(directory + '/' + filename)
 
     def download(self, file):
+
+        print (file)
         if not self.token:
             raise ValueError('No ESIOS Token')
         name = re.split('_', file)[-3]
@@ -135,11 +138,10 @@ class REEformat(Component):
 
                 with zipfile.ZipFile(c) as zf:
                     version = zf.namelist()[0][:2]
-                    file_dates = file[-17:]
-                    filename = '%(version)s_%(name)s_%(file_dates)s' % locals()
+                    filename = version + file[2:]
 
                     try:
-                        #zf.extractall("/tmp/liquicomun" + str(start_date))
+                        zf.extractall("/tmp/liquicomun" + str(start_date))
                         # Open the needed file inside the Zip
                         with zf.open(filename, "r") as fdata:
                             # Load the CSV
