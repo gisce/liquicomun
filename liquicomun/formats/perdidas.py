@@ -36,11 +36,21 @@ class Perdida(REEformat):
     - version (optional)
     """
     def __init__(self, filename=None, **request):
+        # Default values if not provided
+        version = "A1"
+        subsystem = 'peninsula'
+
         if filename:
-            filename = filename.split("_")
-            assert len(filename) > 1 and filename[1], "Filename '{}' is not valid".format(filename)
-            tariff = filename[1]
-            version = filename[-1]
+            filename_list = filename.split("_")
+            assert len(filename_list) > 1 and filename_list[1], "Filename '{}' is not valid".format(filename)
+            tariff = filename_list[1]
+            version = filename_list[-1]
+
+            subsystem = ''
+            if tariff.startswith("Sperd"):
+                subsystem = filename_list[2]
+
+            REEfile = tariff + subsystem
 
         else:
             # If no filename is provided, expect reach tariff, date_start and date_end
@@ -58,13 +68,11 @@ class Perdida(REEformat):
             date_end = request['date_end']
 
             # Optional version
-            version = "A1"
             if "version" in request:
                 assert request['version'] and type(request['version']) == str
                 version = request['version']
 
             # Optional subsystem. By default none (peninsula)
-            subsystem = 'peninsula'
             if "subsystem" in request:
                 assert  request['subsystem'] and type(request['subsystem']) == str
                 subsystem = request['subsystem']
@@ -78,8 +86,8 @@ class Perdida(REEformat):
                 date_end=date_end,
             )
 
-            # Set the name and file_tmpl needed for REEformat class
-            self.name = REEfile
-            self.file_tmpl = REEfile
+        # Set the name and file_tmpl needed for REEformat class
+        self.name = REEfile
+        self.file_tmpl = REEfile
 
         super(Perdida, self).__init__(filename=filename)
