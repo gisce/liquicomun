@@ -21,6 +21,10 @@ called = {
 }
 
 
+subsystems_list = ["baleares", "canarias", "ceuta", "melilla"]
+months_list = range(1,13)
+current_year = 2017
+
 with description('A new'):
     with before.each:
         pass
@@ -56,3 +60,17 @@ with description('A new'):
                     loss_baleares = Perdida(**to_call_baleares)
 
                     assert loss_baleares.matrix != loss_canarias.matrix, "Results must match calling it with an scenario or with a filename"
+
+
+            with it('must be performed if we try all subsystems for current year'):
+                with spec_VCR.use_cassette('losses.yaml'):
+                    to_call = dict(called['by_dict'])
+                    to_call['tariff'] = '3.0A'
+
+                    for a_subsystem in subsystems_list:
+                        for a_month in months_list:
+                            print (a_subsystem, a_month)
+                            to_call['subsystem'] = a_subsystem
+                            to_call['start_date'] = "{}{}01".format(current_year, a_month)
+                            to_call['end_date'] = "{}{}30".format(current_year, a_month)
+                            a_loss = Perdida(**to_call)
