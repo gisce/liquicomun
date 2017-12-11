@@ -118,4 +118,30 @@ class Perdidas(object):
             - can retreive for the passed list of tariffs
             - can retreive for the passed list of subsystems
             """
+            self.date_start = date_start
+            self.date_end = date_end
+
+            available_tariffs = list(tariff_to_REEtariff.keys())
+            if tariffs:
+                # Assert that all passed tariffs exist
+                assert all(x in available_tariffs for x in tariffs)
+                self.tarifss = tariffs
+            else:
+                self.tarifss = available_tariffs
+
+            available_subsystems = list(REE_subsystems_name.keys())
+            if subsystems:
+                # Assert that all passed subsystems exist
+                assert all(x in available_subsystems for x in subsystems)
+
+                self.subsystems = subsystems
+            else:
+                self.subsystems = available_subsystems
+
+
+
+        def process(self):
+            """
+            Process all the available Losses
+            """
             pass
