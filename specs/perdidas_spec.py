@@ -82,7 +82,5 @@ with description('A new'):
                             end_datetime = datetime.strptime(start_string, '%Y%m%d') + relativedelta.relativedelta(months=1) - relativedelta.relativedelta(days=1)
                             to_call['date_end'] = end_datetime.strftime("%Y%m%d")
 
-                            print ("Calling {}".format(to_call))
                             a_loss = Perdida(**to_call)
                             the_matrix = a_loss.matrix
-                            print (the_matrix[0])

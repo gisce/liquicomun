@@ -105,47 +105,56 @@ class REEformat(Component):
         name = re.split('_', filename)[-3]
         version = re.split('_', filename)[-4]
 
-        try:
-            start_date = datetime.strptime(filename[-17:-9], "%Y%m%d")
-            end_date = datetime.strptime(filename[-8:], "%Y%m%d")
+        # Try to review all available versions //to set an iteriational limit
+        count_of_versions = len(self.version_order)
+        for current_version in range(count_of_versions):
+            try:
+                start_date = datetime.strptime(filename[-17:-9], "%Y%m%d")
+                end_date = datetime.strptime(filename[-8:], "%Y%m%d")
 
-            e = Esios(self.token)
-            zdata = e.liquicomun().download(start_date, end_date)
+                e = Esios(self.token)
+                zdata = e.liquicomun().download(start_date, end_date, next=current_version)
 
-            if zdata:
-                c = BytesIO(zdata)
+                if zdata:
+                    c = BytesIO(zdata)
 
-                with zipfile.ZipFile(c) as zf:
-                    version = zf.namelist()[0][:2]
-                    expected_filename = version + filename[2:]
+                    with zipfile.ZipFile(c) as zf:
+                        files_inside_zip = zf.namelist()
 
-                    try:
-                        zf.extractall("/tmp/liquicomun" + str(start_date))
-                        # Open the needed file inside the Zip
-                        with zf.open(expected_filename, "r") as fdata:
-                            # Load the CSV
-                            textfile = TextIOWrapper(fdata)
-                            reereader = csv.reader(textfile, delimiter=';')
+                        version = files_inside_zip[0][:2]
+                        expected_filename = version + filename[2:]
 
-                            # Extract the rows list using the the csv reader
-                            rows = [row for row in reereader]
+                        try:
+                            # Assert that the expected file is contained in the zip. If not raise to iterate the next
+                            assert expected_filename in files_inside_zip, "File '{}' is not inside the zip".format(expected_filename)
 
-                            # Extract current file to disk to keep a CACHE version
-                            zf.extract(member=expected_filename, path=self._CACHE_DIR)
+                            zf.extractall("/tmp/liquicomun" + str(start_date))
+                            # Open the needed file inside the Zip
+                            with zf.open(expected_filename, "r") as fdata:
+                                # Load the CSV
+                                textfile = TextIOWrapper(fdata)
+                                reereader = csv.reader(textfile, delimiter=';')
 
-                    except KeyError:
-                        logging.error ("Coeficients from REE not found, exception opening file_name inside zip {}".format(file_name))
-                        raise ValueError('Coeficients from REE not found')
-            else:
-                logging.error ("Coeficients from REE not found, No available data has been downloaded".format())
-                raise ValueError('Coeficients from REE not found')
+                                # Extract the rows list using the the csv reader
+                                rows = [row for row in reereader]
 
-        except Exception as e:
-            logging.error ("Coeficients from REE not found, exception processing download")
-            raise ValueError('Coeficients from REE not found')
+                                # Extract current file to disk to keep a CACHE version
+                                zf.extract(member=expected_filename, path=self._CACHE_DIR)
 
-        self.filename = expected_filename
-        return rows
+                                self.filename = expected_filename
+                                return rows
+
+                        except KeyError:
+                            logging.error ("Coeficients from REE not found, exception opening expected_filename '{}' inside zip".format(expected_filename))
+
+                else:
+                    logging.error ("Coeficients from REE not found, No available data has been downloaded".format())
+
+            except Exception as e:
+                logging.error ("Coeficients from REE not found, exception processing download [{}]".format(e))
+
+        # If the iteration do not return anything for all available tests, rasise an error
+        raise ValueError('Coeficients from REE for this file not found')
 
     def check_data(self, rows):
         if not rows:
