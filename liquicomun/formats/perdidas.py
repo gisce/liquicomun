@@ -29,7 +29,7 @@ tariff_to_REEtariff = {
     '6.1B': 'g61B',
     '6.2': 'g62',
     '6.3': 'g63',
-    '6.4': 'g64,
+    '6.4': 'g64',
 }
 
 
@@ -110,38 +110,38 @@ class Perdidas(object):
     """
     Perdidas class, provide an iterable way to fetch all available losses between a range of dates.
     """
-        def __init__(self, date_start, date_end, tariffs=None, subsystems=None):
-            """
-            Initializes the Perdidas instance with the start and ending date.
+    def __init__(self, date_start, date_end, tariffs=None, subsystems=None):
+        """
+        Initializes the Perdidas instance with the start and ending date.
 
-            Optionally,
-            - can retreive for the passed list of tariffs
-            - can retreive for the passed list of subsystems
-            """
-            self.date_start = date_start
-            self.date_end = date_end
+        Optionally,
+        - can retreive for the passed list of tariffs
+        - can retreive for the passed list of subsystems
+        """
+        self.date_start = date_start
+        self.date_end = date_end
 
-            available_tariffs = list(tariff_to_REEtariff.keys())
-            if tariffs:
-                # Assert that all passed tariffs exist
-                assert all(x in available_tariffs for x in tariffs)
-                self.tarifss = tariffs
-            else:
-                self.tarifss = available_tariffs
+        available_tariffs = list(tariff_to_REEtariff.keys())
+        if tariffs:
+            # Assert that all passed tariffs exist
+            assert all(x in available_tariffs for x in tariffs)
+            self.tarifss = tariffs
+        else:
+            self.tarifss = available_tariffs
 
-            available_subsystems = list(REE_subsystems_name.keys())
-            if subsystems:
-                # Assert that all passed subsystems exist
-                assert all(x in available_subsystems for x in subsystems)
+        available_subsystems = list(REE_subsystems_name.keys())
+        if subsystems:
+            # Assert that all passed subsystems exist
+            assert all(x in available_subsystems for x in subsystems)
 
-                self.subsystems = subsystems
-            else:
-                self.subsystems = available_subsystems
+            self.subsystems = subsystems
+        else:
+            self.subsystems = available_subsystems
 
 
 
-        def process(self):
-            """
-            Process all the available Losses
-            """
-            pass
+    def process(self):
+        """
+        Process all the available Losses
+        """
+        pass
