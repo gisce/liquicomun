@@ -33,7 +33,6 @@ with description('A new'):
         pass
     with context('download'):
         with context('of losses'):
-            """
             with it('must be performed as expected'):
                 with spec_VCR.use_cassette('losses.yaml'):
                     #formats.REEformat.clear_cache()
@@ -45,9 +44,7 @@ with description('A new'):
                     to_call_30A = dict(called['by_dict'])
                     to_call_30A['tariff'] = '3.0A'
                     loss_30A = Perdida(**to_call_30A)
-
                     assert loss.matrix != loss_30A.matrix, "Results must not be the same for 20A and 30A"
-
 
             with it('must be performed as expected if subsystem is provided'):
                 with spec_VCR.use_cassette('losses.yaml'):
@@ -62,21 +59,47 @@ with description('A new'):
 
                     loss_canarias = Perdida(**to_call_canarias)
                     loss_baleares = Perdida(**to_call_baleares)
-
                     assert loss_baleares.matrix != loss_canarias.matrix, "Results must match calling it with an scenario or with a filename"
 
-            """
             with it('must be performed if we try all subsystems for current year'):
-                with spec_VCR.use_cassette('losses.yaml'):
-                    to_call = dict(called['by_dict'])
-                    to_call['tariff'] = '3.0A'
+                to_call = dict(called['by_dict'])
+                to_call['tariff'] = '3.1A'
 
-                    for a_subsystem in subsystems_list:
-                        for a_month in months_list:
-                            a_month = "{:02d}".format(a_month)
-                            to_call['subsystem'] = a_subsystem
+                # Test retrieve all available coeficients for all subsystems and this year
+                for a_subsystem in subsystems_list:
+                    for a_month in months_list:
+                        a_month = "{:02d}".format(a_month)
+                        to_call['subsystem'] = a_subsystem
+
+                        with spec_VCR.use_cassette('losses_{}_{}_{}.yaml'.format(current_year, a_subsystem, a_month)):
+                            start_string = "{}{}01".format(current_year, a_month)
+                            to_call['date_start'] = start_string
+
+                            end_datetime = datetime.strptime(start_string, '%Y%m%d') + relativedelta.relativedelta(months=1) - relativedelta.relativedelta(days=1)
+                            to_call['date_end'] = end_datetime.strftime("%Y%m%d")
 
                             start_string = "{}{}01".format(current_year, a_month)
+
+
+                            end_datetime = datetime.strptime(start_string, '%Y%m%d') + relativedelta.relativedelta(months=1) - relativedelta.relativedelta(days=1)
+                            to_call['date_end'] = end_datetime.strftime("%Y%m%d")
+
+                            a_loss = Perdida(**to_call)
+                            the_matrix = a_loss.matrix
+
+            with it('must be performed if we try all subsystems for past year'):
+                to_call = dict(called['by_dict'])
+                to_call['tariff'] = '2.0A'
+
+                # Test retrieve all available coeficients for all subsystems and past year
+                for a_subsystem in subsystems_list:
+                    for a_month in months_list:
+                        a_month = "{:02d}".format(a_month)
+                        to_call['subsystem'] = a_subsystem
+
+                        cassete_file = 'losses_{}_{}_{}.yaml'.format(current_year-1, a_subsystem, a_month)
+                        with spec_VCR.use_cassette(cassete_file):
+                            start_string = "{}{}01".format(current_year - 1, a_month)
                             to_call['date_start'] = start_string
 
                             end_datetime = datetime.strptime(start_string, '%Y%m%d') + relativedelta.relativedelta(months=1) - relativedelta.relativedelta(days=1)
