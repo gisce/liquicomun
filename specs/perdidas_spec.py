@@ -70,6 +70,7 @@ with description('A new'):
                     for a_month in months_list:
                         a_month = "{:02d}".format(a_month)
                         to_call['subsystem'] = a_subsystem
+                        print ("Testing {} {}".format(a_month, a_subsystem))
 
                         with spec_VCR.use_cassette('losses_{}_{}_{}.yaml'.format(current_year, a_subsystem, a_month)):
                             start_string = "{}{}01".format(current_year, a_month)
@@ -96,6 +97,7 @@ with description('A new'):
                     for a_month in months_list:
                         a_month = "{:02d}".format(a_month)
                         to_call['subsystem'] = a_subsystem
+                        print ("Testing {} {}".format(a_month, a_subsystem))
 
                         cassete_file = 'losses_{}_{}_{}.yaml'.format(current_year-1, a_subsystem, a_month)
                         with spec_VCR.use_cassette(cassete_file):
