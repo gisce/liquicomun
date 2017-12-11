@@ -104,3 +104,18 @@ class Perdida(REEformat):
         self.file_tmpl = REEfile
 
         super(Perdida, self).__init__(filename=filename)
+
+
+class Perdidas(object):
+    """
+    Perdidas class, provide an iterable way to fetch all available losses between a range of dates.
+    """
+        def __init__(self, date_start, date_end, tariffs=None, subsystems=None):
+            """
+            Initializes the Perdidas instance with the start and ending date.
+
+            Optionally,
+            - can retreive for the passed list of tariffs
+            - can retreive for the passed list of subsystems
+            """
+            pass
