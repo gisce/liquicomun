@@ -145,13 +145,13 @@ class REEformat(Component):
                                 return rows
 
                         except KeyError:
-                            logging.debug ("Exception opening expected_filename '{}' inside zip".format(expected_filename))
+                            logging.error ("Exception opening expected_filename '{}' inside zip".format(expected_filename))
 
                 else:
-                    logging.debug ("No valid data has been downloaded")
+                    logging.error ("No valid data has been downloaded")
 
             except Exception as e:
-                logging.debug ("Exception processing download [{}]".format(e))
+                logging.error ("Exception processing download [{}]".format(e))
 
         # If the iteration do not return anything for all available tests, rasise an error
         logging.error('Requested coeficients from REE not found for {}'.format(filename))

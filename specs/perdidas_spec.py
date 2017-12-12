@@ -11,7 +11,7 @@ import random
 from liquicomun import *
 
 # Activate DEBUG log level
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 
 fixtures_path = 'specs/fixtures/liquicomun/'
 
