@@ -6,9 +6,9 @@ def REE_perd_name(subsystem):
         #'BALEARES: 'S', 'CANARIAS', 'S', ...
     }.get(subsystem, 'Sperd')
 
-
 # REE subsystems name //not performed automatically to be able to change it easily if REE change the codes
 REE_subsystems_name = {
+    'peninsula': '',            # default "fake" subsystem for peninsular data
     'baleares': 'BALEARES',
     'canarias': 'CANARIAS',
     'ceuta': 'CEUTA',
@@ -30,7 +30,6 @@ tariff_to_REEtariff = {
     '6.3': 'g63',
     '6.4': 'g64',
 }
-
 
 class Perdida(REEformat):
     """
