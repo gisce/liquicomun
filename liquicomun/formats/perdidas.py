@@ -55,7 +55,9 @@ class Perdida(REEformat):
             filename_list = filename.split("_")
             assert len(filename_list) > 1 and filename_list[1], "Filename '{}' is not valid".format(filename)
             tariff = filename_list[1]
-            version = filename_list[-1]
+            date_start = filename_list[-1]
+            date_end = filename_list[-2]
+            version = filename_list[1]
 
             subsystem = ''
             if tariff.startswith("Sperd"):
