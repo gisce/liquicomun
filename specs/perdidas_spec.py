@@ -33,7 +33,7 @@ called = {
 DISABLE_EXTENDED_TESTS = True
 
 months_list = range(1,13)
-current_year = 2017
+current_year = datetime.now().year
 
 tariffs_list = ['2.0A', '2.0DHA', '2.0DHS', '2.1A', '2.1DHS', '2.1DHA', '3.0A', '3.1A', '6.1A', '6.1B', '6.2', '6.3', '6.4']
 subsystems_list = ["baleares", "canarias", "ceuta", "melilla"]
