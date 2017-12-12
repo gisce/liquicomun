@@ -1,6 +1,11 @@
 from .ree import REEformat
 
 def REE_perd_name(subsystem):
+    """
+    Auxilar method to reach the expected REE perdidas string depending on the requested subsystem.
+
+    Peninsular files use "perd" string, all others subsystems use "Sperd".
+    """
     return {
         'peninsula': 'perd',
         #'BALEARES: 'S', 'CANARIAS', 'S', ...
@@ -15,6 +20,7 @@ REE_subsystems_name = {
     'melilla': 'MELILLA',
 }
 
+# Equivalences between tariffs labels and the REE filenames
 tariff_to_REEtariff = {
     '2.0A': '20A',
     '2.0DHA': '20D',
@@ -30,6 +36,7 @@ tariff_to_REEtariff = {
     '6.3': 'g63',
     '6.4': 'g64',
 }
+
 
 class Perdida(REEformat):
     """
