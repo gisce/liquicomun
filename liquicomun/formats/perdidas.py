@@ -24,7 +24,7 @@ tariff_to_REEtariff = {
     '2.1DHS': '21DHS',
     '3.0A': '30A',
     '3.1A': '31A',
-    '6.1': 'g61',
+    #'6.1': 'g61',
     '6.1A': 'g61A',
     '6.1B': 'g61B',
     '6.2': 'g62',
@@ -106,7 +106,7 @@ class Perdida(REEformat):
         super(Perdida, self).__init__(filename=filename)
 
 
-class Perdidas(object):
+class Perdidas():
     """
     Perdidas class, provide an iterable way to fetch all available losses between a range of dates.
     """
@@ -114,10 +114,13 @@ class Perdidas(object):
         """
         Initializes the Perdidas instance with the start and ending date.
 
+        Perdidas is an iterable object that dumps their related Perdida instances based on the requested scenario (dates, tariffs and subsystems).
+
         Optionally,
         - can retreive for the passed list of tariffs
         - can retreive for the passed list of subsystems
         """
+
         self.date_start = date_start
         self.date_end = date_end
 
@@ -125,9 +128,9 @@ class Perdidas(object):
         if tariffs:
             # Assert that all passed tariffs exist
             assert all(x in available_tariffs for x in tariffs)
-            self.tarifss = tariffs
+            self.tariffs = tariffs
         else:
-            self.tarifss = available_tariffs
+            self.tariffs = available_tariffs
 
         available_subsystems = list(REE_subsystems_name.keys())
         if subsystems:
@@ -139,9 +142,50 @@ class Perdidas(object):
             self.subsystems = available_subsystems
 
 
+    def __iter__(self):
+        """
+        Initialize the iteration of tariffs and subsystems
+        """
+        print ("Start iteration")
+        self.current_subsystem = 0
+        self.current_tariff = 0
+        return self
 
-    def process(self):
+    def next(self):
         """
-        Process all the available Losses
+        next method for py2 compat
         """
-        pass
+        self.__next__()
+
+    def __next__(self):
+        """
+        Next magic method to process the following element (from the scope of tariffs and subsystems)
+        """
+        # If tariff out of scope, go to the next subsystem
+        print ("Processing ", self.current_subsystem, self.current_tariff, len(self.tariffs))
+
+        if self.current_tariff >= len(self.tariffs):
+            self.current_subsystem += 1
+            self.current_tariff = 0
+
+        # If subsystem out of scope, stop iteration
+        if self.current_subsystem >= len(self.subsystems):
+            raise StopIteration
+
+        print (" > Converted to ", self.current_subsystem, self.current_tariff)
+
+        # Prepare the Loss for the current iteration
+        current_params = {
+            'date_start': self.date_start,
+            'date_end': self.date_end,
+            'tariff': self.tariffs[self.current_tariff],
+            'subsystem': self.subsystems[self.current_subsystem],
+        }
+
+        print (" > {}".format(current_params))
+        current_loss = Perdida(**current_params)
+
+        # Prepare the next iteration
+        self.current_tariff += 1
+        print (current_loss)
+        return current_loss
