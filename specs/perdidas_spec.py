@@ -42,6 +42,25 @@ years_list = range(current_year-2, current_year+1)
 with description('A new'):
     with before.each:
         pass
+
+
+    with context('Perdidas'):
+        with context('iteration'):
+            with it('must be performed as expected'):
+                with spec_VCR.use_cassette('losses_iteration.yaml'):
+                    #formats.REEformat.clear_cache()
+                    expected_count = len(tariffs_list) * len(subsystems_list)
+
+                    losses = Perdidas(**called['losses_by_dict'])
+                    for counter, a_loss in enumerate(losses):
+                        print ("Testing {} {}".format(a_loss.subsystem, a_loss.tariff))
+
+                    # Increase counter to keep same index (base 1 instead base 0)
+                    counter += 1
+
+                    assert expected_count == counter, "Incongruent count of elements while iterating losses [expected '{}' vs '{}'".format(expected_count, counter)
+
+
     with context('Perdida'):
         with context('download'):
             with it('must be performed as expected'):
@@ -72,11 +91,9 @@ with description('A new'):
                     loss_baleares = Perdida(**to_call_baleares)
                     assert loss_baleares.matrix != loss_canarias.matrix, "Results must match calling it with an scenario or with a filename"
 
-
             with it('must be performed if we try some random subsystems for some random month of current year'):
                 to_call = dict(called['by_dict'])
                 to_call['tariff'] = '3.1A'
-
 
                 count_of_elements_to_process = 5
 
@@ -105,7 +122,6 @@ with description('A new'):
 
                         a_loss = Perdida(**to_call)
                         the_matrix = a_loss.matrix
-
 
 
         if not DISABLE_EXTENDED_TESTS:
@@ -161,20 +177,3 @@ with description('A new'):
 
                             a_loss = Perdida(**to_call)
                             the_matrix = a_loss.matrix
-
-
-    with context('Perdidas'):
-        with context('iteration'):
-            with it('must be performed as expected'):
-                with spec_VCR.use_cassette('losses_iteration.yaml'):
-                    #formats.REEformat.clear_cache()
-                    expected_count = len(tariffs_list) * len(subsystems_list)
-
-                    losses = Perdidas(**called['losses_by_dict'])
-                    for counter, a_loss in enumerate(losses):
-                        pass
-
-                    # Increase counter to keep same index (base 1 instead base 0)
-                    counter += 1
-
-                    assert expected_count == counter, "Incongruent count of elements while iterating losses [expected '{}' vs '{}'".format(expected_count, counter)

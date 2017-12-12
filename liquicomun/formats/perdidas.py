@@ -153,7 +153,6 @@ class Perdidas():
         """
         Initialize the iteration of tariffs and subsystems
         """
-        print ("Start iteration")
         self.current_subsystem = 0
         self.current_tariff = 0
         return self
