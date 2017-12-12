@@ -29,6 +29,9 @@ called = {
     },
 }
 
+# Flag to activate extended tests //test all subsystems for all months in current and previous year
+DISABLE_EXTENDED_TESTS = True
+
 months_list = range(1,13)
 current_year = 2017
 
@@ -105,7 +108,7 @@ with description('A new'):
 
 
 
-        if False:
+        if not DISABLE_EXTENDED_TESTS:
             ## Disabled due to the high cost to download all the specs
             ### Save cassettes for those tests will create a huge repo
             ### Commented to provide a quick reactivation for local testing purposes
