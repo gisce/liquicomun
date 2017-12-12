@@ -35,8 +35,8 @@ years_list = range(current_year-2, current_year+1)
 with description('A new'):
     with before.each:
         pass
-    with context('download'):
-        with context('of losses'):
+    with context('Perdida'):
+        with context('download'):
             with it('must be performed as expected'):
                 with spec_VCR.use_cassette('losses.yaml'):
                     #formats.REEformat.clear_cache()
