@@ -32,7 +32,7 @@ called = {
 months_list = range(1,13)
 current_year = 2017
 
-tariffs_list = ['2.0A', '2.0DHA', '2.0DHS', '2.1A', '2.1DHS', '2.1DHA', '3.0A', '3.1A', '6.1', '6.1A', '6.1B', '6.2', '6.3', '6.4']
+tariffs_list = ['2.0A', '2.0DHA', '2.0DHS', '2.1A', '2.1DHS', '2.1DHA', '3.0A', '3.1A', '6.1A', '6.1B', '6.2', '6.3', '6.4']
 subsystems_list = ["baleares", "canarias", "ceuta", "melilla"]
 years_list = range(current_year-2, current_year+1)
 
@@ -40,8 +40,7 @@ with description('A new'):
     with before.each:
         pass
     with context('Perdida'):
-        #with context('download'):
-        if False:
+        with context('download'):
             with it('must be performed as expected'):
                 with spec_VCR.use_cassette('losses.yaml'):
                     #formats.REEformat.clear_cache()
@@ -166,12 +165,13 @@ with description('A new'):
             with it('must be performed as expected'):
                 with spec_VCR.use_cassette('losses_iteration.yaml'):
                     #formats.REEformat.clear_cache()
-
-                    print (called['losses_by_dict'])
+                    expected_count = len(tariffs_list) * len(subsystems_list)
 
                     losses = Perdidas(**called['losses_by_dict'])
-
                     for counter, a_loss in enumerate(losses):
-                        print (counter, a_loss)
+                        pass
 
-                    #assert loss.matrix == loss_30A.matrix, "Results must not be the same for 20A and 30A"
+                    # Increase counter to keep same index (base 1 instead base 0)
+                    counter += 1
+
+                    assert expected_count == counter, "Incongruent count of elements while iterating losses [expected '{}' vs '{}'".format(expected_count, counter)
