@@ -154,7 +154,7 @@ class REEformat(Component):
                 logging.debug ("Exception processing download [{}]".format(e))
 
         # If the iteration do not return anything for all available tests, rasise an error
-        logging.error('Requested coeficients from REE not found')
+        logging.error('Requested coeficients from REE not found for {}'.format(filename))
         raise ValueError('Requested coeficients from REE not found')
 
     def check_data(self, rows):

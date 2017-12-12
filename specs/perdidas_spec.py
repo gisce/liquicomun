@@ -5,9 +5,13 @@ import vcr
 from dateutil import relativedelta
 from datetime import datetime
 
+import logging
 import random
 
 from liquicomun import *
+
+# Activate DEBUG log level
+logging.basicConfig(level=logging.DEBUG)
 
 fixtures_path = 'specs/fixtures/liquicomun/'
 
