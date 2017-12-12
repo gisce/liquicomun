@@ -99,7 +99,12 @@ class Perdida(REEformat):
                 date_end=date_end,
             )
 
-        # Set the name and file_tmpl needed for REEformat class
+        # Set main fields that describes the instance
+        self.date_start = date_start
+        self.date_end = date_end
+        self.tariff = tariff
+        self.version = version
+        self.subsystem = subsystem
         self.name = REEfile
         self.file_tmpl = REEfile
 
@@ -155,15 +160,13 @@ class Perdidas():
         """
         next method for py2 compat
         """
-        self.__next__()
+        return self.__next__()
 
     def __next__(self):
         """
         Next magic method to process the following element (from the scope of tariffs and subsystems)
         """
         # If tariff out of scope, go to the next subsystem
-        print ("Processing ", self.current_subsystem, self.current_tariff, len(self.tariffs))
-
         if self.current_tariff >= len(self.tariffs):
             self.current_subsystem += 1
             self.current_tariff = 0
@@ -171,8 +174,6 @@ class Perdidas():
         # If subsystem out of scope, stop iteration
         if self.current_subsystem >= len(self.subsystems):
             raise StopIteration
-
-        print (" > Converted to ", self.current_subsystem, self.current_tariff)
 
         # Prepare the Loss for the current iteration
         current_params = {
@@ -182,10 +183,8 @@ class Perdidas():
             'subsystem': self.subsystems[self.current_subsystem],
         }
 
-        print (" > {}".format(current_params))
         current_loss = Perdida(**current_params)
 
         # Prepare the next iteration
         self.current_tariff += 1
-        print (current_loss)
         return current_loss
