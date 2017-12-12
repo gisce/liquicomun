@@ -92,7 +92,7 @@ class Perdida(REEformat):
 
             # Optional subsystem. By default none (peninsula)
             subsystem_REE = ""
-            if "subsystem" in request:
+            if "subsystem" in request and request['subsystem'] != "peninsula":
                 assert  request['subsystem'] and type(request['subsystem']) == str
                 subsystem = request['subsystem']
                 subsystem_REE = "_{}".format(REE_subsystems_name[subsystem])
