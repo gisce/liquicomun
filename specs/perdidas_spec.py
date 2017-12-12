@@ -5,6 +5,8 @@ import vcr
 from dateutil import relativedelta
 from datetime import datetime
 
+import random
+
 from liquicomun import *
 
 fixtures_path = 'specs/fixtures/liquicomun/'
@@ -23,10 +25,12 @@ called = {
     "by_filename": "C2_perd20A_20171001_20171031"
 }
 
-
-subsystems_list = ["baleares", "canarias", "ceuta", "melilla"]
 months_list = range(1,13)
 current_year = 2017
+
+tariffs_list = ['2.0A', '2.0DHA', '2.0DHS', '2.1A', '2.1DHS', '2.1DHA', '3.0A', '3.1A', '6.1', '6.1A', '6.1B', '6.2', '6.3', '6.4']
+subsystems_list = ["baleares", "canarias", "ceuta", "melilla"]
+years_list = range(current_year-2, current_year+1)
 
 with description('A new'):
     with before.each:
@@ -60,6 +64,47 @@ with description('A new'):
                     loss_canarias = Perdida(**to_call_canarias)
                     loss_baleares = Perdida(**to_call_baleares)
                     assert loss_baleares.matrix != loss_canarias.matrix, "Results must match calling it with an scenario or with a filename"
+
+
+            with it('must be performed if we try some random subsystems for some random month of current year'):
+                to_call = dict(called['by_dict'])
+                to_call['tariff'] = '3.1A'
+
+
+                count_of_elements_to_process = 5
+
+                # Test retrieve all available coeficients for all subsystems and this year
+                for _ in range(count_of_elements_to_process):
+                    a_subsystem = random.choice(subsystems_list)
+                    a_month = random.choice(months_list)
+                    a_tariff = random.choice(tariffs_list)
+                    a_year = random.choice(years_list)
+
+                    a_month = "{:02d}".format(a_month)
+                    to_call['subsystem'] = a_subsystem
+                    print ("Testing {}/{} {}:{}".format(a_month, a_year, a_subsystem, a_tariff))
+
+                    with spec_VCR.use_cassette('losses_{}_{}_{}.yaml'.format(a_year, a_subsystem, a_month)):
+                        start_string = "{}{}01".format(a_year, a_month)
+                        to_call['date_start'] = start_string
+
+                        end_datetime = datetime.strptime(start_string, '%Y%m%d') + relativedelta.relativedelta(months=1) - relativedelta.relativedelta(days=1)
+                        to_call['date_end'] = end_datetime.strftime("%Y%m%d")
+
+                        start_string = "{}{}01".format(a_year, a_month)
+
+                        end_datetime = datetime.strptime(start_string, '%Y%m%d') + relativedelta.relativedelta(months=1) - relativedelta.relativedelta(days=1)
+                        to_call['date_end'] = end_datetime.strftime("%Y%m%d")
+
+                        a_loss = Perdida(**to_call)
+                        the_matrix = a_loss.matrix
+
+
+
+"""
+            ## Disabled due to the high cost to download all the specs
+            ### Save cassettes for those tests will create a huge repo
+            ### Commented to provide a quick reactivation for local testing purposes
 
             with it('must be performed if we try all subsystems for current year'):
                 to_call = dict(called['by_dict'])
@@ -109,3 +154,4 @@ with description('A new'):
 
                             a_loss = Perdida(**to_call)
                             the_matrix = a_loss.matrix
+"""
