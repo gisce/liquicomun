@@ -40,7 +40,7 @@ months_list = range(1,13)
 current_year = datetime.now().year
 
 tariffs_list = ['2.0A', '2.0DHA', '2.0DHS', '2.1A', '2.1DHS', '2.1DHA', '3.0A', '3.1A', '6.1A', '6.1B', '6.2', '6.3', '6.4']
-subsystems_list = ["baleares", "canarias", "ceuta", "melilla"]
+subsystems_list = ["peninsula", "baleares", "canarias", "ceuta", "melilla"]
 years_list = range(current_year-2, current_year+1)
 
 with description('A new'):
@@ -62,7 +62,7 @@ with description('A new'):
                     # Increase counter to keep same index (base 1 instead base 0)
                     counter += 1
 
-                    assert expected_count == counter, "Incongruent count of elements while iterating losses [expected '{}' vs '{}'".format(expected_count, counter)
+                    assert expected_count == counter, "Incongruent count of elements while iterating losses [expected '{}' vs '{}']".format(expected_count, counter)
 
 
     with context('Perdida'):
