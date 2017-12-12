@@ -22,7 +22,11 @@ called = {
         'date_start': '20171001',
         'date_end': '20171031',
     },
-    "by_filename": "C2_perd20A_20171001_20171031"
+    "by_filename": "C2_perd20A_20171001_20171031",
+    "losses_by_dict": {
+        'date_start': '20171001',
+        'date_end': '20171031',
+    },
 }
 
 months_list = range(1,13)
@@ -36,7 +40,8 @@ with description('A new'):
     with before.each:
         pass
     with context('Perdida'):
-        with context('download'):
+        #with context('download'):
+        if False:
             with it('must be performed as expected'):
                 with spec_VCR.use_cassette('losses.yaml'):
                     #formats.REEformat.clear_cache()
@@ -101,7 +106,7 @@ with description('A new'):
 
 
 
-"""
+        if False:
             ## Disabled due to the high cost to download all the specs
             ### Save cassettes for those tests will create a huge repo
             ### Commented to provide a quick reactivation for local testing purposes
@@ -154,4 +159,19 @@ with description('A new'):
 
                             a_loss = Perdida(**to_call)
                             the_matrix = a_loss.matrix
-"""
+
+
+    with context('Perdidas'):
+        with context('iteration'):
+            with it('must be performed as expected'):
+                with spec_VCR.use_cassette('losses_iteration.yaml'):
+                    #formats.REEformat.clear_cache()
+
+                    print (called['losses_by_dict'])
+
+                    losses = Perdidas(**called['losses_by_dict'])
+
+                    for counter, a_loss in enumerate(losses):
+                        print (counter, a_loss)
+
+                    #assert loss.matrix == loss_30A.matrix, "Results must not be the same for 20A and 30A"
