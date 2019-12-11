@@ -1,5 +1,6 @@
 from .ree import REEformat
 
+
 def REE_perd_name(subsystem):
     """
     Auxilar method to reach the expected REE perdidas string depending on the requested subsystem.
@@ -8,8 +9,9 @@ def REE_perd_name(subsystem):
     """
     return {
         'peninsula': 'perd',
-        #'BALEARES: 'S', 'CANARIAS', 'S', ...
+        # 'BALEARES: 'S', 'CANARIAS', 'S', ...
     }.get(subsystem, 'Sperd')
+
 
 # REE subsystems name //not performed automatically to be able to change it easily if REE change the codes
 REE_subsystems_name = {
@@ -43,7 +45,8 @@ class Perdida(REEformat):
     """
     Initializes a Perdida from a set of conditions
 
-    It downloads the related LIQUICOMUN and try to find the requested file inside the zip calling based on the REEformat flow.
+    It downloads the related LIQUICOMUN and try to find the requested file inside the zip calling
+    based on the REEformat flow.
 
     Accept a filename or:
     - tariff
@@ -94,7 +97,7 @@ class Perdida(REEformat):
             # Optional subsystem. By default none (peninsula)
             subsystem_REE = ""
             if "subsystem" in request and request['subsystem'] != "peninsula":
-                assert  request['subsystem'] and type(request['subsystem']) == str
+                assert request['subsystem'] and type(request['subsystem']) == str
                 subsystem = request['subsystem']
                 subsystem_REE = "_{}".format(REE_subsystems_name[subsystem])
 
@@ -119,7 +122,7 @@ class Perdida(REEformat):
         super(Perdida, self).__init__(filename=filename)
 
 
-class Perdidas():
+class Perdidas:
     """
     Perdidas class, provide an iterable way to fetch all available losses between a range of dates.
     """
@@ -127,7 +130,8 @@ class Perdidas():
         """
         Initializes the Perdidas instance with the start and ending date.
 
-        Perdidas is an iterable object that dumps their related Perdida instances based on the requested scenario (dates, tariffs and subsystems).
+        Perdidas is an iterable object that dumps their related Perdida instances
+        based on the requested scenario (dates, tariffs and subsystems).
 
         Optionally,
         - can retreive for the passed list of tariffs
@@ -153,7 +157,6 @@ class Perdidas():
             self.subsystems = subsystems
         else:
             self.subsystems = available_subsystems
-
 
     def __iter__(self):
         """

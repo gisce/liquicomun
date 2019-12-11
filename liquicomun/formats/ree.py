@@ -1,26 +1,26 @@
 import re
 import fnmatch
 import os
-from datetime import datetime, date, timedelta
-from io import BytesIO, StringIO, TextIOWrapper
+from datetime import datetime
+from io import BytesIO, TextIOWrapper
 from esios import Esios
 import csv
 import zipfile
 import sys
 import logging
 
-
 from .component import Component
 
+
 class REEformat(Component):
-    ''' REE esios common format'''
+    """ REE esios common format """
     name = 'ree'
     file_tmpl = 'ree'
     file_name = ''
     file_version = ''
     # May be 'cache', 'server' or 'file'
     file_origin = ''
-    token = ''
+    # token = ''
 
     _CACHE_DIR = '/tmp/'
 
@@ -28,7 +28,7 @@ class REEformat(Component):
 
     version_order = (
         'C7', 'A7', 'C6',
-        #'A6', 'C5', 'C4', 'A5', 'A4',   #inconsistent formats see https://github.com/gisce/esios/pull/17
+        # 'A6', 'C5', 'C4', 'A5', 'A4',  # inconsistent formats see https://github.com/gisce/esios/pull/17
         'C3', 'A3', 'C2',
         'A2', 'C1', 'A1'
     )
@@ -38,8 +38,8 @@ class REEformat(Component):
         self.token = token
 
     def __init__(self, filename=None):
-        ''' Gets file from REE or disc and stores it in cache'''
-        ''' If version is provided, ensure to fetch just this version '''
+        """ Gets file from REE or disc and stores it in cache """
+        """ If version is provided, ensure to fetch just this version """
         rows = []
 
         self.file_name_re = '.+_%s(_2[0-9]{7}){2}$' % self.file_tmpl
@@ -83,10 +83,10 @@ class REEformat(Component):
 
     @staticmethod
     def clear_cache(version=''):
-        '''
+        """
         :param version: Cn or An prefix. All if empty
         :return: True or False
-        '''
+        """
         if version:
             prefixes = [version]
         else:
@@ -102,8 +102,8 @@ class REEformat(Component):
     def download(self, filename):
         if not self.token:
             raise ValueError('No ESIOS Token')
-        name = re.split('_', filename)[-3]
-        version = re.split('_', filename)[-4]
+        # name = re.split('_', filename)[-3]
+        # version = re.split('_', filename)[-4]
 
         # Try to review all available versions //to set an iteriational limit
         count_of_versions = len(self.version_order)
@@ -126,7 +126,8 @@ class REEformat(Component):
 
                         try:
                             # Assert that the expected file is contained in the zip. If not raise to iterate the next
-                            assert expected_filename in files_inside_zip, "File '{}' is not inside the zip".format(expected_filename)
+                            assert expected_filename in files_inside_zip, "File '{}' is not inside the zip".format(
+                                expected_filename)
 
                             zf.extractall("/tmp/liquicomun" + str(start_date))
                             # Open the needed file inside the Zip
@@ -145,13 +146,14 @@ class REEformat(Component):
                                 return rows
 
                         except KeyError:
-                            logging.debug ("Exception opening expected_filename '{}' inside zip".format(expected_filename))
+                            logging.debug("Exception opening expected_filename '{}' inside zip".format(
+                                expected_filename))
 
                 else:
-                    logging.debug ("No valid data has been downloaded")
+                    logging.debug("No valid data has been downloaded")
 
             except Exception as e:
-                logging.debug ("Exception processing download [{}]".format(e))
+                logging.debug("Exception processing download [{}]".format(e))
 
         # If the iteration do not return anything for all available tests, rasise an error
         logging.error('Requested coeficients from REE not found for {}'.format(filename))
