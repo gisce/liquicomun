@@ -40,6 +40,9 @@ tariff_to_REEtariff = {
     '6.4': 'g64',
 }
 
+# versions of ESIOS files with Kestimado
+estimation_calculated = ['C2', 'A2', 'C1', 'A1']
+
 
 class Perdida(REEformat):
     """
@@ -94,14 +97,19 @@ class Perdida(REEformat):
                 assert request['version'] and type(request['version']) == str
                 version = request['version']
 
-            # Optional subsystem. By default none (peninsula)
-            subsystem_REE = ""
-            if "subsystem" in request and request['subsystem'] != "peninsula":
-                assert request['subsystem'] and type(request['subsystem']) == str
-                subsystem = request['subsystem']
-                subsystem_REE = "_{}".format(REE_subsystems_name[subsystem])
+            # # Optional subsystem. By default none (peninsula)
+            # subsystem_REE = ""
+            # if "subsystem" in request and request['subsystem'] != "peninsula":
+            #     assert request['subsystem'] and type(request['subsystem']) == str
+            #     subsystem = request['subsystem']
+            #     subsystem_REE = "_{}".format(REE_subsystems_name[subsystem])
 
-            REEfile = REE_perd_name(subsystem) + tariff + subsystem_REE
+            # REEfile = REE_perd_name(subsystem) + tariff + subsystem_REE
+
+            if version in estimation_calculated:
+                REEfile = 'Kestimado'
+            else:
+                REEfile = 'Kreal'
 
             filename = "{version}_{REEfile}_{date_start}_{date_end}".format(
                 version=version,
@@ -109,6 +117,20 @@ class Perdida(REEformat):
                 date_start=date_start,
                 date_end=date_end,
             )
+
+            if tariff.startswith('g'):
+                periodtablename = "{version}_pertarif_{date_start}_{date_end}".format(
+                    version=version,
+                    date_start=date_start,
+                    date_end=date_end,
+                )
+            else:
+                periodtablename = "{version}_petar{tariff}_{date_start}_{date_end}".format(
+                    version=version,
+                    tariff=tariff,
+                    date_start=date_start,
+                    date_end=date_end,
+                )
 
         # Set main fields that describes the instance
         self.date_start = date_start
@@ -119,7 +141,7 @@ class Perdida(REEformat):
         self.name = REEfile
         self.file_tmpl = REEfile
 
-        super(Perdida, self).__init__(filename=filename)
+        super(Perdida, self).__init__(filename=filename, periods=periodtablename, tariff=tariff)
 
 
 class Perdidas:

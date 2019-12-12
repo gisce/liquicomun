@@ -12,6 +12,22 @@ import logging
 from .component import Component
 
 
+LOSS_COEFF_BOE = {'20A': {'1': 14},
+                  '20DH': {'1': 14.8, '3': 10.7},
+                  '20DHS': {'1': 14.8, '2': 14.4, '3': 8.6},
+                  '21A': {'1': 14},
+                  '21DH': {'1': 14, '3': 10.7},
+                  '21DHS': {'1': 14, '2': 14.4, '3': 8.6},
+                  '30A': {'1': 15.3, '2': 14.6, '3': 10.7},  # review
+                  '31A': {'1': 6.6, '2': 6.4, '3': 4.8},
+                  'g61A': {'1': 6.8, '2': 6.6, '3': 6.5, '4': 6.3, '5': 6.3, '6': 5.4},
+                  'g61B': {'1': 6.8, '2': 6.6, '3': 6.5, '4': 6.3, '5': 6.3, '6': 5.4},
+                  'g62': {'1': 4.9, '2': 4.7, '3': 4.6, '4': 4.4, '5': 4.4, '6': 3.8},
+                  'g63': {'1': 3.4, '2': 3.3, '3': 3.2, '4': 3.1, '5': 3.1, '6': 2.7},
+                  'g64': {'1': 1.8, '2': 1.7, '3': 1.7, '4': 1.7, '5': 1.7, '6': 1.4}
+}
+
+
 class REEformat(Component):
     """ REE esios common format """
     name = 'ree'
@@ -27,17 +43,20 @@ class REEformat(Component):
     token = os.getenv('ESIOS_TOKEN')
 
     version_order = (
+        # real
         'C7', 'A7', 'C6',
-        # 'A6', 'C5', 'C4', 'A5', 'A4',  # inconsistent formats see https://github.com/gisce/esios/pull/17
-        'C3', 'A3', 'C2',
-        'A2', 'C1', 'A1'
+        'A6', 'C5', 'C4', 'A5', 'A4',  # inconsistent formats see https://github.com/gisce/esios/pull/17
+        'C3', 'A3',
+        # estimated
+        'C2', 'A2', 'C1', 'A1'
     )
+
     no_cache = ('A2', 'C1', 'A1')
 
     def set_token(self, token):
         self.token = token
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, periods=None, tariff=None):
         """ Gets file from REE or disc and stores it in cache """
         """ If version is provided, ensure to fetch just this version """
         rows = []
@@ -79,7 +98,29 @@ class REEformat(Component):
 
         self.file_version = found_version
         self.origin = origin
-        self.loadfile(rows)
+
+        periodstable = []
+        # periods table for current tariff
+        if os.path.isfile(periods):
+            with open(periods, 'rb') as csvfile:
+                reereader = csv.reader(csvfile, delimiter=';')
+                periodstable = [row for row in reereader]
+        else:
+            found_version = ''
+            for version in available_versions:
+                periods = periods + filename[2:]
+                if (os.path.isfile(self._CACHE_DIR + periods)
+                        and version not in self.no_cache):
+                    with open(self._CACHE_DIR + periods, 'r') as csvfile:
+                        found_version = version
+                        reereader = csv.reader(csvfile, delimiter=';')
+                        periodstable = [row for row in reereader]
+                        break
+
+            if not found_version:
+                periodstable = self.download(periods)
+
+        self.loadfile(rows, periodstable, tariff)
 
     @staticmethod
     def clear_cache(version=''):
@@ -172,16 +213,25 @@ class REEformat(Component):
         if rows[-1][0] != '*':
             raise ValueError('Bad %s file format' % self.name)
 
-    def format_data(self, rows):
+    def format_data(self, rows, periodstable, tariff):
         # formats data as 25 * num days matrix
-        return [[v and float(v) or 0.0 for v in r[1:26]] for r in rows[2:-1]]
+        matrix = []
+        for r in rows[2:-1]:
+            row = []
+            for k in r[1:26]:
+                period = periodstable[r][k]
+                loss = k and float(k) * LOSS_COEFF_BOE[tariff][period]
+                row.append('%.1f' % loss or 0.0)
+            matrix.append(row)
+        return matrix
 
-    def loadfile(self, rows):
+    def loadfile(self, rows, periodstable, tariff):
         self.check_data(rows)
+        self.check_data(periodstable)
 
         version = ''.join(rows[1][:6])
         filedate = datetime.strptime(self.filename[-8:], '%Y%m%d')
 
         super(REEformat, self).__init__(data=filedate, version=version)
-        data = self.format_data(rows)
+        data = self.format_data(rows, periodstable, tariff)
         self.load(data)
