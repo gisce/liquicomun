@@ -56,7 +56,7 @@ class REEformat(Component):
     def set_token(self, token):
         self.token = token
 
-    def __init__(self, filename=None, periods=None, tariff=None):
+    def __init__(self, filename=None, k_table=None, tariff=None):
         """ Gets file from REE or disc and stores it in cache """
         """ If version is provided, ensure to fetch just this version """
         rows = []
@@ -101,24 +101,26 @@ class REEformat(Component):
 
         periodstable = []
         # periods table for current tariff
-        if os.path.isfile(periods):
-            with open(periods, 'rb') as csvfile:
+        if os.path.isfile(k_table):
+            with open(k_table, 'rb') as csvfile:
                 reereader = csv.reader(csvfile, delimiter=';')
                 periodstable = [row for row in reereader]
         else:
             found_version = ''
             for version in available_versions:
-                periods = version + periods[2:]
-                if (os.path.isfile(self._CACHE_DIR + periods)
+                if version == 'C2':
+                    k_table = k_table.replace('real', 'estimado')
+                k_table = version + k_table[2:]
+                if (os.path.isfile(self._CACHE_DIR + k_table)
                         and version not in self.no_cache):
-                    with open(self._CACHE_DIR + periods, 'r') as csvfile:
+                    with open(self._CACHE_DIR + k_table, 'r') as csvfile:
                         found_version = version
                         reereader = csv.reader(csvfile, delimiter=';')
                         periodstable = [row for row in reereader]
                         break
 
             if not found_version:
-                periodstable = self.download(periods)
+                periodstable = self.download(k_table)
 
         self.loadfile(rows, periodstable, tariff)
 

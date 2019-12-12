@@ -28,7 +28,7 @@ tariff_to_REEtariff = {
     '2.0DHA': '20DH',
     '2.0DHS': '20DHS',
     '2.1A': '21A',
-    '2.1DHA': '21D',
+    '2.1DHA': '21DH',
     '2.1DHS': '21DHS',
     '3.0A': '30A',
     '3.1A': '31A',
@@ -106,10 +106,7 @@ class Perdida(REEformat):
 
             # REEfile = REE_perd_name(subsystem) + tariff + subsystem_REE
 
-            if version in estimation_calculated:
-                REEfile = 'Kestimado'
-            else:
-                REEfile = 'Kreal'
+            REEfile = 'Kreal'
 
             filename = "{version}_{REEfile}_{date_start}_{date_end}".format(
                 version=version,
@@ -119,21 +116,21 @@ class Perdida(REEformat):
             )
 
             if tariff.startswith('g'):
-                periodtablename = "{version}_pertarif_{date_start}_{date_end}".format(
+                ktable = "{version}_pertarif_{date_start}_{date_end}".format(
                     version=version,
                     date_start=date_start,
                     date_end=date_end,
                 )
             else:
                 if 'DH' in tariff:
-                    periodtablename = "{version}_peta{tariff}_{date_start}_{date_end}".format(
+                    ktable = "{version}_peta{tariff}_{date_start}_{date_end}".format(
                         version=version,
                         tariff=tariff,
                         date_start=date_start,
                         date_end=date_end,
                     )
                 else:
-                    periodtablename = "{version}_petar{tariff}_{date_start}_{date_end}".format(
+                    ktable = "{version}_petar{tariff}_{date_start}_{date_end}".format(
                         version=version,
                         tariff=tariff,
                         date_start=date_start,
@@ -149,7 +146,7 @@ class Perdida(REEformat):
         self.name = REEfile
         self.file_tmpl = REEfile
 
-        super(Perdida, self).__init__(filename=filename, periods=periodtablename, tariff=tariff)
+        super(Perdida, self).__init__(filename=filename, k_table=ktable, tariff=tariff)
 
 
 class Perdidas:
