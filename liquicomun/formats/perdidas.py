@@ -25,7 +25,7 @@ REE_subsystems_name = {
 # Equivalences between tariffs labels and the REE filenames
 tariff_to_REEtariff = {
     '2.0A': '20A',
-    '2.0DHA': '20D',
+    '2.0DHA': '20DH',
     '2.0DHS': '20DHS',
     '2.1A': '21A',
     '2.1DHA': '21D',
@@ -97,12 +97,12 @@ class Perdida(REEformat):
                 assert request['version'] and type(request['version']) == str
                 version = request['version']
 
-            # # Optional subsystem. By default none (peninsula)
+            # Optional subsystem. By default none (peninsula)
             # subsystem_REE = ""
-            # if "subsystem" in request and request['subsystem'] != "peninsula":
-            #     assert request['subsystem'] and type(request['subsystem']) == str
-            #     subsystem = request['subsystem']
-            #     subsystem_REE = "_{}".format(REE_subsystems_name[subsystem])
+            if "subsystem" in request and request['subsystem'] != "peninsula":
+                assert request['subsystem'] and type(request['subsystem']) == str
+                subsystem = request['subsystem']
+                # subsystem_REE = "_{}".format(REE_subsystems_name[subsystem])
 
             # REEfile = REE_perd_name(subsystem) + tariff + subsystem_REE
 
@@ -125,12 +125,20 @@ class Perdida(REEformat):
                     date_end=date_end,
                 )
             else:
-                periodtablename = "{version}_petar{tariff}_{date_start}_{date_end}".format(
-                    version=version,
-                    tariff=tariff,
-                    date_start=date_start,
-                    date_end=date_end,
-                )
+                if 'DH' in tariff:
+                    periodtablename = "{version}_peta{tariff}_{date_start}_{date_end}".format(
+                        version=version,
+                        tariff=tariff,
+                        date_start=date_start,
+                        date_end=date_end,
+                    )
+                else:
+                    periodtablename = "{version}_petar{tariff}_{date_start}_{date_end}".format(
+                        version=version,
+                        tariff=tariff,
+                        date_start=date_start,
+                        date_end=date_end,
+                    )
 
         # Set main fields that describes the instance
         self.date_start = date_start

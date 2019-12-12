@@ -108,7 +108,7 @@ class REEformat(Component):
         else:
             found_version = ''
             for version in available_versions:
-                periods = periods + filename[2:]
+                periods = version + periods[2:]
                 if (os.path.isfile(self._CACHE_DIR + periods)
                         and version not in self.no_cache):
                     with open(self._CACHE_DIR + periods, 'r') as csvfile:
@@ -196,7 +196,7 @@ class REEformat(Component):
             except Exception as e:
                 logging.debug("Exception processing download [{}]".format(e))
 
-        # If the iteration do not return anything for all available tests, rasise an error
+        # If the iteration do not return anything for all available tests, raise an error
         logging.error('Requested coeficients from REE not found for {}'.format(filename))
         raise ValueError('Requested coeficients from REE not found')
 
@@ -216,18 +216,25 @@ class REEformat(Component):
     def format_data(self, rows, periodstable, tariff):
         # formats data as 25 * num days matrix
         matrix = []
+        y = 1
         for r in rows[2:-1]:
+            y += 1
             row = []
+            x = 0
             for k in r[1:26]:
-                period = periodstable[r][k]
-                loss = k and float(k) * LOSS_COEFF_BOE[tariff][period]
+                x += 1
+                period = periodstable[y][x]
+                if period:
+                    loss = k and float(k) * LOSS_COEFF_BOE[tariff][period]
+                else:
+                    loss = 0.0
                 row.append('%.1f' % loss or 0.0)
             matrix.append(row)
         return matrix
 
     def loadfile(self, rows, periodstable, tariff):
-        self.check_data(rows)
-        self.check_data(periodstable)
+        # self.check_data(rows)
+        # self.check_data(periodstable)
 
         version = ''.join(rows[1][:6])
         filedate = datetime.strptime(self.filename[-8:], '%Y%m%d')
