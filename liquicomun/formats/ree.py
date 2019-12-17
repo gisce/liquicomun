@@ -85,6 +85,7 @@ class REEformat(Component):
             for version in available_versions:
                 if version in estimation_calculated:
                     filename = filename.replace('real', 'estimado')
+                    self.name = self.name.replace('real', 'estimado')
                 filename = version + filename[2:]
                 self.filename = filename
                 if (os.path.isfile(self._CACHE_DIR + filename)
@@ -206,13 +207,19 @@ class REEformat(Component):
         raise ValueError('Requested coeficients from REE not found')
 
     def check_data(self, rows):
+        self.check_data_without_file_name(rows)
+
+        if len(rows[0]) < 2 or len(rows[0]) > 2 or not rows[0][0].startswith(self.name[:4]):
+            raise ValueError('Bad %s file format' % self.name)
+
+    def check_data_without_file_name(self, rows):
         if not rows:
             raise ValueError('Empty File')
         # 2 header + 28-31 days + 1 footer = 31-34 rows
         if len(rows) not in [31, 32, 33, 34]:
             raise ValueError('Bad %s file format' % self.name)
 
-        if len(rows[0]) < 2 or len(rows[0]) > 2 or not rows[0][0].startswith(self.name[:4]):
+        if len(rows[0]) < 2 or len(rows[0]) > 2:
             raise ValueError('Bad %s file format' % self.name)
 
         if rows[-1][0] != '*':
@@ -238,8 +245,8 @@ class REEformat(Component):
         return matrix
 
     def loadfile(self, rows, periodstable, tariff):
-        # self.check_data(rows)
-        # self.check_data(periodstable)
+        self.check_data(rows)
+        self.check_data_without_file_name(periodstable)
 
         version = ''.join(rows[1][:6])
         filedate = datetime.strptime(self.filename[-8:], '%Y%m%d')
