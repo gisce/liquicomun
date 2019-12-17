@@ -40,9 +40,6 @@ tariff_to_REEtariff = {
     '6.4': 'g64',
 }
 
-# versions of ESIOS files with Kestimado
-estimation_calculated = ['C2', 'A2', 'C1', 'A1']
-
 
 class Perdida(REEformat):
     """

@@ -27,6 +27,9 @@ LOSS_COEFF_BOE = {'20A': {'1': 14},
                   'g64': {'1': 1.8, '2': 1.7, '3': 1.7, '4': 1.7, '5': 1.7, '6': 1.4}
 }
 
+# versions of ESIOS files with Kestimado
+estimation_calculated = ['C2', 'A2', 'C1', 'A1']
+
 
 class REEformat(Component):
     """ REE esios common format """
@@ -80,6 +83,8 @@ class REEformat(Component):
         else:
             found_version = ''
             for version in available_versions:
+                if version in estimation_calculated:
+                    filename = filename.replace('real', 'estimado')
                 filename = version + filename[2:]
                 self.filename = filename
                 if (os.path.isfile(self._CACHE_DIR + filename)
@@ -108,8 +113,6 @@ class REEformat(Component):
         else:
             found_version = ''
             for version in available_versions:
-                if version == 'C2':
-                    k_table = k_table.replace('real', 'estimado')
                 k_table = version + k_table[2:]
                 if (os.path.isfile(self._CACHE_DIR + k_table)
                         and version not in self.no_cache):
