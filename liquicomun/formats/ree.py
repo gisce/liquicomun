@@ -12,6 +12,7 @@ import logging
 from .component import Component
 
 
+# TODO: Review tariffs BOE coefficients
 LOSS_COEFF_BOE = {'20A': {'1': 14},
                   '20DH': {'1': 14.8, '3': 10.7},
                   '20DHS': {'1': 14.8, '2': 14.4, '3': 8.6},
@@ -19,9 +20,9 @@ LOSS_COEFF_BOE = {'20A': {'1': 14},
                   '21DH': {'1': 14, '3': 10.7},
                   '21DHS': {'1': 14, '2': 14.4, '3': 8.6},
                   '30A': {'1': 15.3, '2': 14.6, '3': 10.7},  # review
-                  '31A': {'1': 6.6, '2': 6.4, '3': 4.8},
+                  '31A': {'1': 6.6, '2': 6.4, '3': 4.8},  # review
                   'g61A': {'1': 6.8, '2': 6.6, '3': 6.5, '4': 6.3, '5': 6.3, '6': 5.4},
-                  'g61B': {'1': 6.8, '2': 6.6, '3': 6.5, '4': 6.3, '5': 6.3, '6': 5.4},
+                  'g61B': {'1': 6.8, '2': 6.6, '3': 6.5, '4': 6.3, '5': 6.3, '6': 5.4},  # review
                   'g62': {'1': 4.9, '2': 4.7, '3': 4.6, '4': 4.4, '5': 4.4, '6': 3.8},
                   'g63': {'1': 3.4, '2': 3.3, '3': 3.2, '4': 3.1, '5': 3.1, '6': 2.7},
                   'g64': {'1': 1.8, '2': 1.7, '3': 1.7, '4': 1.7, '5': 1.7, '6': 1.4}
@@ -48,7 +49,7 @@ class REEformat(Component):
     version_order = (
         # real
         'C7', 'A7', 'C6',
-        'A6', 'C5', 'C4', 'A5', 'A4',  # inconsistent formats see https://github.com/gisce/esios/pull/17
+        'A6', 'C5', 'C4', 'A5', 'A4',
         'C3', 'A3',
         # estimated
         'C2', 'A2', 'C1', 'A1'
@@ -63,6 +64,8 @@ class REEformat(Component):
         """ Gets file from REE or disc and stores it in cache """
         """ If version is provided, ensure to fetch just this version """
         rows = []
+
+        final_file_name = ''
 
         self.file_name_re = '.+_%s(_2[0-9]{7}){2}$' % self.file_tmpl
         if not filename:
@@ -92,13 +95,24 @@ class REEformat(Component):
                         and version not in self.no_cache):
                     with open(self._CACHE_DIR + filename, 'r') as csvfile:
                         found_version = version
+                        final_file_name = filename
                         reereader = csv.reader(csvfile, delimiter=';')
                         rows = [row for row in reereader]
                         origin = 'cache'
                         break
 
             if not found_version:
-                rows = self.download(filename)
+                filename = filename.replace('estimado', 'real')
+                self.name = self.name.replace('estimado', 'real')
+                try:
+                    rows = self.download(filename)
+                    final_file_name = self.filename
+                except ValueError:
+                    print("No Kreal available. Switching to Kestimado.")
+                    filename = filename.replace('real', 'estimado')
+                    self.name = self.name.replace('real', 'estimado')
+                    rows = self.download(filename)
+                    final_file_name = self.filename
                 found_version = self.filename[:2]
                 origin = 'server'
 
@@ -126,6 +140,7 @@ class REEformat(Component):
             if not found_version:
                 periodstable = self.download(k_table)
 
+        self.filename = final_file_name
         self.loadfile(rows, periodstable, tariff)
 
     @staticmethod
