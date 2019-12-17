@@ -13,6 +13,7 @@ from .component import Component
 
 
 # TODO: Review tariffs BOE coefficients
+# https://www.boe.es/diario_boe/txt.php?id=BOE-A-2014-1052
 LOSS_COEFF_BOE = {'20A': {'1': 14},
                   '20DH': {'1': 14.8, '3': 10.7},
                   '20DHS': {'1': 14.8, '2': 14.4, '3': 8.6},
@@ -255,7 +256,7 @@ class REEformat(Component):
                     loss = k and float(k) * LOSS_COEFF_BOE[tariff][period]
                 else:
                     loss = 0.0
-                row.append('%.1f' % loss or 0.0)
+                row.append(round(loss, 1) or 0.0)
             matrix.append(row)
         return matrix
 
