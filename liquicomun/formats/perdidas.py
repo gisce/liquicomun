@@ -63,16 +63,18 @@ class Perdida(REEformat):
         if filename:
             filename_list = filename.split("_")
             assert len(filename_list) > 1 and filename_list[1], "Filename '{}' is not valid".format(filename)
+            version = filename_list[0]
             tariff = filename_list[1]
-            date_start = filename_list[-1]
-            date_end = filename_list[-2]
-            version = filename_list[1]
+            date_start = filename_list[-2]
+            date_end = filename_list[-1]
 
-            subsystem = ''
             if tariff.startswith("Sperd"):
                 subsystem = filename_list[2]
+                REEfile = tariff + subsystem
+            else:
+                REEfile = tariff
 
-            REEfile = tariff + subsystem
+            tariff = tariff.split('perd')[-1]
 
         else:
             # If no filename is provided, expect reach tariff, date_start and date_end
@@ -95,44 +97,40 @@ class Perdida(REEformat):
                 version = request['version']
 
             # Optional subsystem. By default none (peninsula)
-            # subsystem_REE = ""
             if "subsystem" in request and request['subsystem'] != "peninsula":
                 assert request['subsystem'] and type(request['subsystem']) == str
                 subsystem = request['subsystem']
-                # subsystem_REE = "_{}".format(REE_subsystems_name[subsystem])
-
-            # REEfile = REE_perd_name(subsystem) + tariff + subsystem_REE
 
             REEfile = 'Kreal'
 
-            filename = "{version}_{REEfile}_{date_start}_{date_end}".format(
+        filename = "{version}_{REEfile}_{date_start}_{date_end}".format(
+            version=version,
+            REEfile=REEfile,
+            date_start=date_start,
+            date_end=date_end,
+        )
+
+        if tariff.startswith('g'):
+            ktable = "{version}_pertarif_{date_start}_{date_end}".format(
                 version=version,
-                REEfile=REEfile,
                 date_start=date_start,
                 date_end=date_end,
             )
-
-            if tariff.startswith('g'):
-                ktable = "{version}_pertarif_{date_start}_{date_end}".format(
+        else:
+            if 'DH' in tariff:
+                ktable = "{version}_peta{tariff}_{date_start}_{date_end}".format(
                     version=version,
+                    tariff=tariff,
                     date_start=date_start,
                     date_end=date_end,
                 )
             else:
-                if 'DH' in tariff:
-                    ktable = "{version}_peta{tariff}_{date_start}_{date_end}".format(
-                        version=version,
-                        tariff=tariff,
-                        date_start=date_start,
-                        date_end=date_end,
-                    )
-                else:
-                    ktable = "{version}_petar{tariff}_{date_start}_{date_end}".format(
-                        version=version,
-                        tariff=tariff,
-                        date_start=date_start,
-                        date_end=date_end,
-                    )
+                ktable = "{version}_petar{tariff}_{date_start}_{date_end}".format(
+                    version=version,
+                    tariff=tariff,
+                    date_start=date_start,
+                    date_end=date_end,
+                )
 
         # Set main fields that describes the instance
         self.date_start = date_start
