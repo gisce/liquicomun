@@ -86,62 +86,70 @@ class REEformat(Component):
         else:
             found_version = ''
             for version in available_versions:
-                if version in estimation_calculated:
-                    filename = filename.replace('real', 'estimado')
-                    self.name = self.name.replace('real', 'estimado')
+                if k_table is not None:
+                    if version in estimation_calculated:
+                        filename = filename.replace('real', 'estimado')
+                        self.name = self.name.replace('real', 'estimado')
                 filename = version + filename[2:]
                 self.filename = filename
                 if (os.path.isfile(self._CACHE_DIR + filename)
                         and version not in self.no_cache):
                     with open(self._CACHE_DIR + filename, 'r') as csvfile:
                         found_version = version
-                        final_file_name = filename
+                        if k_table is not None:
+                            final_file_name = filename
                         reereader = csv.reader(csvfile, delimiter=';')
                         rows = [row for row in reereader]
                         origin = 'cache'
                         break
 
             if not found_version:
-                filename = filename.replace('estimado', 'real')
-                self.name = self.name.replace('estimado', 'real')
-                try:
+                if k_table is None:
                     rows = self.download(filename)
-                    final_file_name = self.filename
-                except ValueError:
-                    print("No Kreal available. Switching to Kestimado.")
-                    filename = filename.replace('real', 'estimado')
-                    self.name = self.name.replace('real', 'estimado')
-                    rows = self.download(filename)
-                    final_file_name = self.filename
+                else:
+                    filename = filename.replace('estimado', 'real')
+                    self.name = self.name.replace('estimado', 'real')
+                    try:
+                        rows = self.download_using_coeffs(filename)
+                        final_file_name = self.filename
+                    except ValueError:
+                        print("No Kreal available. Switching to Kestimado.")
+                        filename = filename.replace('real', 'estimado')
+                        self.name = self.name.replace('real', 'estimado')
+                        rows = self.download_using_coeffs(filename)
+                        final_file_name = self.filename
                 found_version = self.filename[:2]
                 origin = 'server'
 
         self.file_version = found_version
         self.origin = origin
 
-        periodstable = []
-        # periods table for current tariff
-        if os.path.isfile(k_table):
-            with open(k_table, 'rb') as csvfile:
-                reereader = csv.reader(csvfile, delimiter=';')
-                periodstable = [row for row in reereader]
+        if k_table is None:
+            self.loadfile(rows)
         else:
-            found_version = ''
-            for version in available_versions:
-                k_table = version + k_table[2:]
-                if (os.path.isfile(self._CACHE_DIR + k_table)
-                        and version not in self.no_cache):
-                    with open(self._CACHE_DIR + k_table, 'r') as csvfile:
-                        found_version = version
-                        reereader = csv.reader(csvfile, delimiter=';')
-                        periodstable = [row for row in reereader]
-                        break
+            periodstable = []
+            # periods table for current tariff
+            if os.path.isfile(k_table):
+                with open(k_table, 'rb') as csvfile:
+                    reereader = csv.reader(csvfile, delimiter=';')
+                    periodstable = [row for row in reereader]
+            else:
+                found_version = ''
+                for version in available_versions:
+                    k_table = version + k_table[2:]
+                    if (os.path.isfile(self._CACHE_DIR + k_table)
+                            and version not in self.no_cache):
+                        with open(self._CACHE_DIR + k_table, 'r') as csvfile:
+                            found_version = version
+                            reereader = csv.reader(csvfile, delimiter=';')
+                            periodstable = [row for row in reereader]
+                            break
 
-            if not found_version:
-                periodstable = self.download(k_table)
+                if not found_version:
+                    periodstable = self.download_using_coeffs(k_table)
 
-        self.filename = final_file_name
-        self.loadfile(rows, periodstable, tariff)
+            self.filename = final_file_name
+            self.loadfile_using_coeffs(rows, periodstable, tariff)
 
     @staticmethod
     def clear_cache(version=''):
@@ -162,6 +170,66 @@ class REEformat(Component):
                     os.unlink(directory + '/' + file_name)
 
     def download(self, filename):
+        if not self.token:
+            raise ValueError('No ESIOS Token')
+        name = re.split('_', filename)[-3]
+        version = re.split('_', filename)[-4]
+
+        # Try to review all available versions //to set an iteriational limit
+        count_of_versions = len(self.version_order)
+        for current_version in range(count_of_versions):
+            try:
+                start_date = datetime.strptime(filename[-17:-9], "%Y%m%d")
+                end_date = datetime.strptime(filename[-8:], "%Y%m%d")
+
+                e = Esios(self.token)
+                zdata = e.liquicomun().download(start_date, end_date, next=current_version)
+
+                if zdata:
+                    c = BytesIO(zdata)
+
+                    with zipfile.ZipFile(c) as zf:
+                        files_inside_zip = zf.namelist()
+
+                        version = files_inside_zip[0][:2]
+                        expected_filename = version + filename[2:]
+
+                        try:
+                            # Assert that the expected file is contained in the zip. If not raise to iterate the next
+                            assert expected_filename in files_inside_zip, "File '{}' is not inside the zip".format(
+                                expected_filename)
+
+                            zf.extractall("/tmp/liquicomun" + str(start_date))
+                            # Open the needed file inside the Zip
+                            with zf.open(expected_filename, "r") as fdata:
+                                # Load the CSV
+                                textfile = TextIOWrapper(fdata)
+                                reereader = csv.reader(textfile, delimiter=';')
+
+                                # Extract the rows list using the the csv reader
+                                rows = [row for row in reereader]
+
+                                # Extract current file to disk to keep a CACHE version
+                                zf.extract(member=expected_filename, path=self._CACHE_DIR)
+
+                                self.filename = expected_filename
+                                return rows
+
+                        except KeyError:
+                            logging.debug(
+                                "Exception opening expected_filename '{}' inside zip".format(expected_filename))
+
+                else:
+                    logging.debug("No valid data has been downloaded")
+
+            except Exception as e:
+                logging.debug("Exception processing download [{}]".format(e))
+
+        # If the iteration do not return anything for all available tests, rasise an error
+        logging.error('Requested coeficients from REE not found for {}'.format(filename))
+        raise ValueError('Requested coeficients from REE not found')
+
+    def download_using_coeffs(self, filename):
         if not self.token:
             raise ValueError('No ESIOS Token')
         # name = re.split('_', filename)[-3]
@@ -222,6 +290,19 @@ class REEformat(Component):
         raise ValueError('Requested coeficients from REE not found')
 
     def check_data(self, rows):
+        if not rows:
+            raise ValueError('Empty File')
+        # 2 header + 28-31 days + 1 footer = 31-34 rows
+        if len(rows) not in [31, 32, 33, 34]:
+            raise ValueError('Bad %s file format' % self.name)
+
+        if len(rows[0]) < 2 or len(rows[0]) > 2 or not rows[0][0].startswith(self.name[:4]):
+            raise ValueError('Bad %s file format' % self.name)
+
+        if rows[-1][0] != '*':
+            raise ValueError('Bad %s file format' % self.name)
+
+    def check_data_using_coeffs(self, rows):
         self.check_data_without_file_name(rows)
 
         if len(rows[0]) < 2 or len(rows[0]) > 2 or not rows[0][0].startswith(self.name[:4]):
@@ -240,7 +321,11 @@ class REEformat(Component):
         if rows[-1][0] != '*':
             raise ValueError('Bad %s file format' % self.name)
 
-    def format_data(self, rows, periodstable, tariff):
+    def format_data(self, rows):
+        # formats data as 25 * num days matrix
+        return [[v and float(v) or 0.0 for v in r[1:26]] for r in rows[2:-1]]
+
+    def format_data_using_coeffs(self, rows, periodstable, tariff):
         # formats data as 25 * num days matrix
         matrix = []
         y = 1
@@ -259,13 +344,23 @@ class REEformat(Component):
             matrix.append(row)
         return matrix
 
-    def loadfile(self, rows, periodstable, tariff):
+    def loadfile(self, rows):
         self.check_data(rows)
+
+        version = ''.join(rows[1][:6])
+        filedate = datetime.strptime(self.filename[-8:], '%Y%m%d')
+
+        super(REEformat, self).__init__(data=filedate, version=version)
+        data = self.format_data(rows)
+        self.load(data)
+
+    def loadfile_using_coeffs(self, rows, periodstable, tariff):
+        self.check_data_using_coeffs(rows)
         self.check_data_without_file_name(periodstable)
 
         version = ''.join(rows[1][:6])
         filedate = datetime.strptime(self.filename[-8:], '%Y%m%d')
 
         super(REEformat, self).__init__(data=filedate, version=version)
-        data = self.format_data(rows, periodstable, tariff)
+        data = self.format_data_using_coeffs(rows, periodstable, tariff)
         self.load(data)

@@ -23,7 +23,26 @@ REE_subsystems_name = {
 }
 
 # Equivalences between tariffs labels and the REE filenames
+# perd files version
 tariff_to_REEtariff = {
+    '2.0A': '20A',
+    '2.0DHA': '20D',
+    '2.0DHS': '20DHS',
+    '2.1A': '21A',
+    '2.1DHA': '21D',
+    '2.1DHS': '21DHS',
+    '3.0A': '30A',
+    '3.1A': '31A',
+    '3.1A LB': '31A',
+    '6.1A': 'g61A',
+    '6.1B': 'g61B',
+    '6.2': 'g62',
+    '6.3': 'g63',
+    '6.4': 'g64',
+}
+
+# coefficient version
+tariff_to_REEtariff_using_coeffs = {
     '2.0A': '20A',
     '2.0DHA': '20DH',
     '2.0DHS': '20DHS',
@@ -60,95 +79,161 @@ class Perdida(REEformat):
         version = "A1"
         subsystem = 'peninsula'
 
-        if filename:
-            filename_list = filename.split("_")
-            assert len(filename_list) > 1 and filename_list[1], "Filename '{}' is not valid".format(filename)
-            version = filename_list[0]
-            tariff = filename_list[1]
-            date_start = filename_list[-2]
-            date_end = filename_list[-1]
+        # type_import must be in ['perd_files', 'k_coeffs']
+        assert "type_import" in request and request['type_import'] and type(request['type_import']) == str
 
-            if tariff.startswith("Sperd"):
-                subsystem = filename_list[2]
-                REEfile = tariff + subsystem
+        if request['type_import'] == 'k_coeffs':
+
+            if filename:
+                filename_list = filename.split("_")
+                assert len(filename_list) > 1 and filename_list[1], "Filename '{}' is not valid".format(filename)
+                version = filename_list[0]
+                tariff = filename_list[1]
+                date_start = filename_list[-2]
+                date_end = filename_list[-1]
+
+                if tariff.startswith("Sperd"):
+                    subsystem = filename_list[2]
+                    REEfile = tariff + subsystem
+                else:
+                    REEfile = tariff
+
+                tariff = tariff.split('perd')[-1]
+
             else:
-                REEfile = tariff
+                # If no filename is provided, expect reach tariff, date_start and date_end
+                assert "tariff" in request and request['tariff'] and type(request['tariff']) == str
+                assert "date_start" in request and request['date_start'] and type(request['date_start']) == str
+                assert "date_end" in request and request['date_end'] and type(request['date_end']) == str
 
-            tariff = tariff.split('perd')[-1]
+                # Try to convert the humanized tariff to REE name
+                try:
+                    tariff = tariff_to_REEtariff_using_coeffs[request['tariff']]
+                except:
+                    tariff = request['tariff']
 
-        else:
-            # If no filename is provided, expect reach tariff, date_start and date_end
-            assert "tariff" in request and request['tariff'] and type(request['tariff']) == str
-            assert "date_start" in request and request['date_start'] and type(request['date_start']) == str
-            assert "date_end" in request and request['date_end'] and type(request['date_end']) == str
+                date_start = request['date_start']
+                date_end = request['date_end']
 
-            # Try to convert the humanized tariff to REE name
-            try:
-                tariff = tariff_to_REEtariff[request['tariff']]
-            except:
-                tariff = request['tariff']
+                # Optional version
+                if "version" in request:
+                    assert request['version'] and type(request['version']) == str
+                    version = request['version']
 
-            date_start = request['date_start']
-            date_end = request['date_end']
+                # Optional subsystem. By default none (peninsula)
+                if "subsystem" in request and request['subsystem'] != "peninsula":
+                    assert request['subsystem'] and type(request['subsystem']) == str
+                    subsystem = request['subsystem']
 
-            # Optional version
-            if "version" in request:
-                assert request['version'] and type(request['version']) == str
-                version = request['version']
+                REEfile = 'Kreal'
 
-            # Optional subsystem. By default none (peninsula)
-            if "subsystem" in request and request['subsystem'] != "peninsula":
-                assert request['subsystem'] and type(request['subsystem']) == str
-                subsystem = request['subsystem']
-
-            REEfile = 'Kreal'
-
-        filename = "{version}_{REEfile}_{date_start}_{date_end}".format(
-            version=version,
-            REEfile=REEfile,
-            date_start=date_start,
-            date_end=date_end,
-        )
-
-        if tariff.startswith('g'):
-            ktable = "{version}_pertarif_{date_start}_{date_end}".format(
+            filename = "{version}_{REEfile}_{date_start}_{date_end}".format(
                 version=version,
+                REEfile=REEfile,
                 date_start=date_start,
                 date_end=date_end,
             )
-        else:
-            if 'DH' in tariff:
-                ktable = "{version}_peta{tariff}_{date_start}_{date_end}".format(
+
+            if tariff.startswith('g'):
+                ktable = "{version}_pertarif_{date_start}_{date_end}".format(
                     version=version,
-                    tariff=tariff,
                     date_start=date_start,
                     date_end=date_end,
                 )
             else:
-                ktable = "{version}_petar{tariff}_{date_start}_{date_end}".format(
+                if 'DH' in tariff:
+                    ktable = "{version}_peta{tariff}_{date_start}_{date_end}".format(
+                        version=version,
+                        tariff=tariff,
+                        date_start=date_start,
+                        date_end=date_end,
+                    )
+                else:
+                    ktable = "{version}_petar{tariff}_{date_start}_{date_end}".format(
+                        version=version,
+                        tariff=tariff,
+                        date_start=date_start,
+                        date_end=date_end,
+                    )
+
+            # Set main fields that describes the instance
+            self.date_start = date_start
+            self.date_end = date_end
+            self.tariff = tariff
+            self.version = version
+            self.subsystem = subsystem
+            self.name = REEfile
+            self.file_tmpl = REEfile
+
+            super(Perdida, self).__init__(filename=filename, k_table=ktable, tariff=tariff)
+        else:
+            if filename:
+                filename_list = filename.split("_")
+                assert len(filename_list) > 1 and filename_list[1], "Filename '{}' is not valid".format(filename)
+                tariff = filename_list[1]
+                date_start = filename_list[-1]
+                date_end = filename_list[-2]
+                version = filename_list[1]
+
+                subsystem = ''
+                if tariff.startswith("Sperd"):
+                    subsystem = filename_list[2]
+
+                REEfile = tariff + subsystem
+
+            else:
+                # If no filename is provided, expect reach tariff, date_start and date_end
+                assert "tariff" in request and request['tariff'] and type(request['tariff']) == str
+                assert "date_start" in request and request['date_start'] and type(request['date_start']) == str
+                assert "date_end" in request and request['date_end'] and type(request['date_end']) == str
+
+                # Try to convert the humanized tariff to REE name
+                try:
+                    tariff = tariff_to_REEtariff[request['tariff']]
+                except:
+                    tariff = request['tariff']
+
+                date_start = request['date_start']
+                date_end = request['date_end']
+
+                # Optional version
+                if "version" in request:
+                    assert request['version'] and type(request['version']) == str
+                    version = request['version']
+
+                # Optional subsystem. By default none (peninsula)
+                subsystem_REE = ""
+                if "subsystem" in request and request['subsystem'] != "peninsula":
+                    assert request['subsystem'] and type(request['subsystem']) == str
+                    subsystem = request['subsystem']
+                    subsystem_REE = "_{}".format(REE_subsystems_name[subsystem])
+
+                REEfile = REE_perd_name(subsystem) + tariff + subsystem_REE
+
+                filename = "{version}_{REEfile}_{date_start}_{date_end}".format(
                     version=version,
-                    tariff=tariff,
+                    REEfile=REEfile,
                     date_start=date_start,
                     date_end=date_end,
                 )
 
-        # Set main fields that describes the instance
-        self.date_start = date_start
-        self.date_end = date_end
-        self.tariff = tariff
-        self.version = version
-        self.subsystem = subsystem
-        self.name = REEfile
-        self.file_tmpl = REEfile
+                # Set main fields that describes the instance
+            self.date_start = date_start
+            self.date_end = date_end
+            self.tariff = tariff
+            self.version = version
+            self.subsystem = subsystem
+            self.name = REEfile
+            self.file_tmpl = REEfile
 
-        super(Perdida, self).__init__(filename=filename, k_table=ktable, tariff=tariff)
+            super(Perdida, self).__init__(filename=filename)
 
 
 class Perdidas:
     """
     Perdidas class, provide an iterable way to fetch all available losses between a range of dates.
     """
-    def __init__(self, date_start, date_end, tariffs=None, subsystems=None):
+    def __init__(self, date_start, date_end, tariffs=None, subsystems=None, type_import=None):
         """
         Initializes the Perdidas instance with the start and ending date.
 
@@ -163,7 +248,14 @@ class Perdidas:
         self.date_start = date_start
         self.date_end = date_end
 
-        available_tariffs = list(tariff_to_REEtariff.keys())
+        # type_import must be in ['perd_files', 'k_coeffs']
+        assert type_import in ['perd_files', 'k_coeffs'] and type(type_import) == str
+        self.type_import = type_import
+
+        if type_import == 'k_coeffs':
+            available_tariffs = list(tariff_to_REEtariff_using_coeffs.keys())
+        else:
+            available_tariffs = list(tariff_to_REEtariff.keys())
         if tariffs:
             # Assert that all passed tariffs exist
             assert all(x in available_tariffs for x in tariffs)
@@ -213,6 +305,7 @@ class Perdidas:
             'date_end': self.date_end,
             'tariff': self.tariffs[self.current_tariff],
             'subsystem': self.subsystems[self.current_subsystem],
+            'type_import': self.type_import
         }
 
         current_loss = Perdida(**current_params)
