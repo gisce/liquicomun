@@ -24,11 +24,13 @@ called = {
         'tariff': '2.0A',
         'date_start': '20191001',
         'date_end': '20191031',
+        'type_import': 'k_coeffs'
     },
     "by_filename": "perd20A_20191001_20191031",
     "losses_by_dict": {
         'date_start': '20191001',
         'date_end': '20191031',
+        'type_import': 'k_coeffs'
     },
 }
 
