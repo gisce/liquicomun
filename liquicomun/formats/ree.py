@@ -5,6 +5,7 @@ from datetime import datetime
 from io import BytesIO, TextIOWrapper
 from esios import Esios
 import csv
+import time
 import zipfile
 import sys
 import logging
@@ -43,6 +44,7 @@ class REEformat(Component):
     # token = ''
 
     _CACHE_DIR = '/tmp/'
+    _CACHE_TIMEOUT = 3600
 
     token = os.getenv('ESIOS_TOKEN')
 
@@ -92,16 +94,18 @@ class REEformat(Component):
                         self.name = self.name.replace('real', 'estimado')
                 filename = version + filename[2:]
                 self.filename = filename
-                if (os.path.isfile(self._CACHE_DIR + filename)
-                        and version not in self.no_cache):
-                    with open(self._CACHE_DIR + filename, 'r') as csvfile:
-                        found_version = version
-                        if k_table is not None:
-                            final_file_name = filename
-                        reereader = csv.reader(csvfile, delimiter=';')
-                        rows = [row for row in reereader]
-                        origin = 'cache'
-                        break
+                filepath = self._CACHE_DIR + filename
+                if os.path.isfile(filepath):
+                    file_age = time.time() - os.path.getmtime(filepath)
+                    if version not in self.no_cache or file_age < self._CACHE_TIMEOUT:
+                        with open(self._CACHE_DIR + filename, 'r') as csvfile:
+                            found_version = version
+                            if k_table is not None:
+                                final_file_name = filename
+                            reereader = csv.reader(csvfile, delimiter=';')
+                            rows = [row for row in reereader]
+                            origin = 'cache'
+                            break
 
             if not found_version:
                 if k_table is None:
