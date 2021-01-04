@@ -39,6 +39,15 @@ tariff_to_REEtariff = {
     '6.2': 'g62',
     '6.3': 'g63',
     '6.4': 'g64',
+    # https://www.boe.es/eli/es/cir/2020/01/15/3
+    '2.0TD': '20TD',
+    '3.0TD': '30TD',
+    '6.1TD': '61TD',
+    '6.2TD': '62TD',
+    '6.3TD': '63TD',
+    '6.4TD': '64TD',
+    '3.0TDVE': '30TD',
+    '6.1TDVE': '61TD',
 }
 
 # coefficient version
@@ -57,6 +66,15 @@ tariff_to_REEtariff_using_coeffs = {
     '6.2': 'g62',
     '6.3': 'g63',
     '6.4': 'g64',
+    # https://www.boe.es/eli/es/cir/2020/01/15/3
+    '2.0TD': '20TD',
+    '3.0TD': '30TD',
+    '6.1TD': '61TD',
+    '6.2TD': '62TD',
+    '6.3TD': '63TD',
+    '6.4TD': '64TD',
+    '3.0TDVE': '30TD',
+    '6.1TDVE': '61TD',
 }
 
 
