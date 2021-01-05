@@ -326,7 +326,11 @@ class Perdidas:
             'type_import': self.type_import
         }
 
-        current_loss = Perdida(**current_params)
+        try:
+            current_loss = Perdida(**current_params)
+        except:
+            self.current_tariff += 1
+            return None
 
         # Prepare the next iteration
         self.current_tariff += 1
