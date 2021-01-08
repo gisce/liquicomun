@@ -44,7 +44,9 @@ tariffs_list = ['2.0A', '2.0DHA', '2.0DHS',
                 '2.1A', '2.1DHS', '2.1DHA',
                 '3.0A',
                 '3.1A', '3.1A LB',
-                '6.1A', '6.1B', '6.2', '6.3', '6.4']
+                '6.1A', '6.1B', '6.2', '6.3', '6.4',
+                # https://www.boe.es/eli/es/cir/2020/01/15/3
+                '2.0TD', '3.0TD', '6.1TD', '6.2TD', '6.3TD', '6.4TD', '3.0TDVE', '6.1TDVE']
 subsystems_list = ["peninsula", "baleares", "canarias", "ceuta", "melilla"]
 years_list = range(current_year-2, current_year)
 
@@ -61,7 +63,10 @@ with description('A new'):
 
                     losses = Perdidas(**called['losses_by_dict'])
                     for counter, a_loss in enumerate(losses, start=1):
-                        print("Testing {} {}".format(a_loss.subsystem, a_loss.tariff))
+                        if a_loss is not None:
+                            print("Testing {} {}".format(a_loss.subsystem, a_loss.tariff))
+                        else:
+                            print("Losses file not available in ESIOS")
 
                     assert expected_count == counter, \
                         "Incongruent count of elements while iterating losses [expected '{}' vs '{}']".format(
