@@ -278,11 +278,17 @@ class Perdidas:
         # trim new tariffs when importing before june 2021
         if date_start < '20200101':
             available_tariffs = list(set(available_tariffs) - {'6.1B'})
+            if tariffs:
+                tariffs = list(set(tariffs) - {'6.1B'})
 
         if date_start < '20210601':
             available_tariffs = list(set(available_tariffs) - {'2.0TD', '3.0TD',
                                                                '6.1TD', '6.2TD', '6.3TD', '6.4TD',
                                                                '3.0TDVE', '6.1TDVE'})
+            if tariffs:
+                tariffs = list(set(tariffs) - {'2.0TD', '3.0TD',
+                                               '6.1TD', '6.2TD', '6.3TD', '6.4TD',
+                                               '3.0TDVE', '6.1TDVE'})
 
         available_tariffs.sort()
         if tariffs:
