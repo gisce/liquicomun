@@ -274,6 +274,17 @@ class Perdidas:
             available_tariffs = list(tariff_to_REEtariff_using_coeffs.keys())
         else:
             available_tariffs = list(tariff_to_REEtariff.keys())
+
+        # trim new tariffs when importing before june 2021
+        if date_start < '20200101':
+            available_tariffs = list(set(available_tariffs) - {'6.1B'})
+
+        if date_start < '20210601':
+            available_tariffs = list(set(available_tariffs) - {'2.0TD', '3.0TD',
+                                                               '6.1TD', '6.2TD', '6.3TD', '6.4TD',
+                                                               '3.0TDVE', '6.1TDVE'})
+
+        available_tariffs.sort()
         if tariffs:
             # Assert that all passed tariffs exist
             assert all(x in available_tariffs for x in tariffs)
